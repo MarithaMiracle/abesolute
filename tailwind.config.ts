@@ -12,6 +12,7 @@ const config: Config = {
         navy: '#2D4F6B',
         'navy-dark': '#1E3448',
         'navy-deep': '#16293A',
+        'navy-true': '#05233D',
         cream: '#E8DCC8',
         'cream-light': '#F2EAD8',
         'blue-pale': '#B8CDD9',
