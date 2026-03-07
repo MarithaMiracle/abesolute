@@ -1,6 +1,6 @@
 {
-  "/rsvp/page": "app/rsvp/page.js",
-  "/ceremony/page": "app/ceremony/page.js",
+  "/wedding-party/page": "app/wedding-party/page.js",
   "/page": "app/page.js",
-  "/wedding-party/page": "app/wedding-party/page.js"
+  "/rsvp/page": "app/rsvp/page.js",
+  "/ceremony/page": "app/ceremony/page.js"
 }

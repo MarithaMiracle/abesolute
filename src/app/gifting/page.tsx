@@ -27,140 +27,96 @@ export default function GiftingPage() {
       {/* ── HERO SECTION ── */}
       <section className="relative min-h-[55vh]">
         {/* Script names top right */}
-        <div className="absolute top-24 right-8 mt-20 md:right-20 text-right z-10">
-          <p className="script-font text-5xl md:text-8xl text-cream leading-tight">Feyisayo</p>
-          <p className="script-font text-4xl md:text-7xl text-cream/80 leading-tight">&amp;</p>
-          <p className="script-font text-5xl md:text-8xl text-cream leading-tight">Temitayo</p>
+        <div className="absolute top-24 right-4 sm:right-8 md:right-20 text-right z-10">
+          <p className="script-font text-4xl sm:text-5xl md:text-7xl text-cream leading-tight">Feyisayo</p>
+          <p className="script-font text-3xl sm:text-4xl md:text-6xl text-cream/80 leading-tight">&amp;</p>
+          <p className="script-font text-4xl sm:text-5xl md:text-7xl text-cream leading-tight">Temitayo</p>
         </div>
       </section>
 
       {/* ── GIFTING DETAILS ── */}
-      <section className="relative py-16 px-6">
+      <section className="relative py-10 sm:py-16 px-4 sm:px-6">
         <div className="relative z-10 max-w-4xl mx-auto">
-          {/* Overlapping layout */}
-          <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start' }}>
+          {/* Single responsive layout — stacked on mobile, overlapping on desktop */}
+          <style>{`
+            .gifting-layout { display: flex; flex-direction: column; }
+            .gifting-photo { width: 100%; flex-shrink: 0; }
+            .gifting-card {
+              background-color: #B8CCE0;
+              border-radius: 0px;
+              padding: 24px 20px 28px;
+              width: 100%;
+              box-sizing: border-box;
+            }
+            .gifting-card h2 { font-size: 26px; margin: 0 0 20px; }
+            .gifting-card .msg-box { padding: 14px 16px; margin-bottom: 24px; }
+            .gifting-card .msg-box p { font-size: 13px; }
+            .gifting-card .bank-row span { font-size: 14px; }
+            .gifting-card .ref-row span { font-size: 12px; }
+            @media (min-width: 768px) {
+              .gifting-layout { flex-direction: row; align-items: flex-start; position: relative; }
+              .gifting-photo { width: 52%; position: relative; z-index: 1; }
+              .gifting-card {
+                width: 52%;
+                flex-shrink: 0;
+                margin-left: -80px;
+                margin-top: 60px;
+                position: relative;
+                z-index: 2;
+                padding: 32px 28px 36px;
+              }
+              .gifting-card h2 { font-size: 36px; margin: 0 0 28px; }
+              .gifting-card .msg-box { padding: 18px 20px; margin-bottom: 32px; }
+              .gifting-card .msg-box p { font-size: 14px; }
+              .gifting-card .bank-row span { font-size: 17px; }
+              .gifting-card .ref-row span { font-size: 13px; }
+            }
+          `}</style>
 
-            {/* Left: couple photo */}
-            <div style={{ position: 'relative', zIndex: 1, flexShrink: 0, width: '52%' }}>
+          <div className="gifting-layout">
+            <div className="gifting-photo">
               <img
                 src="/images/Gifting couple image.webp"
                 alt="Couple"
                 style={{ width: '100%', height: 'auto', display: 'block' }}
               />
             </div>
-
-            {/* Right: info card — overlaps photo, square edges */}
-            <div style={{
-              backgroundColor: '#B8CCE0',
-              borderRadius: '0px',
-              padding: '32px 28px 36px',
-              marginLeft: '-80px',
-              marginTop: '140px',
-              position: 'relative',
-              zIndex: 2,
-              width: '52%',
-              flexShrink: 0,
-            }}>
-              {/* GIFTING header */}
+            <div className="gifting-card">
               <h2 style={{
                 fontFamily: 'Georgia, serif',
-                fontSize: '36px',
                 fontWeight: 800,
                 color: '#2B4A6B',
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
-                margin: '0 0 28px',
               }}>
                 Gifting
               </h2>
-
-              {/* Darker blue message box */}
-              <div style={{
-                backgroundColor: '#9BB4CC',
-                borderRadius: '10px',
-                padding: '18px 20px',
-                marginBottom: '32px',
-              }}>
-                <p style={{
-                  fontFamily: 'Georgia, serif',
-                  fontSize: '14px',
-                  color: '#2B4A6B',
-                  lineHeight: 1.7,
-                  margin: '0 0 8px',
-                }}>
+              <div className="msg-box" style={{ backgroundColor: '#9BB4CC', borderRadius: '10px' }}>
+                <p style={{ fontFamily: 'Georgia, serif', color: '#2B4A6B', lineHeight: 1.7, margin: '0 0 8px' }}>
                   Your presence at our ìgbéyàwó means the world to us and is truly the most important gift.
                 </p>
-                <p style={{
-                  fontFamily: 'Georgia, serif',
-                  fontSize: '14px',
-                  color: '#2B4A6B',
-                  lineHeight: 1.7,
-                  margin: 0,
-                  fontWeight: 700,
-                }}>
+                <p style={{ fontFamily: 'Georgia, serif', color: '#2B4A6B', lineHeight: 1.7, margin: 0, fontWeight: 700 }}>
                   For those who would still like to give, monetary gifts are kindly preferred and will be deeply appreciated.
                 </p>
               </div>
-
-              {/* Bank details — large, clean, label light + value bold */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {[
                   { label: 'Bank:', value: 'Monzo' },
                   { label: 'Name:', value: 'Feyisayo Abe' },
                   { label: 'Sort Code:', value: '04-00-04' },
                   { label: 'Account Number:', value: '58159815' },
                 ].map(({ label, value }) => (
-                  <div key={label} style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                    <span style={{
-                      fontFamily: 'Georgia, serif',
-                      fontSize: '17px',
-                      color: '#3A6080',
-                      fontWeight: 400,
-                      whiteSpace: 'nowrap',
-                    }}>
-                      {label}
-                    </span>
-                    <span style={{
-                      fontFamily: 'Georgia, serif',
-                      fontSize: '17px',
-                      color: '#2B4A6B',
-                      fontWeight: 700,
-                      letterSpacing: label.includes('Sort') || label.includes('Account') ? '0.05em' : '0',
-                    }}>
-                      {value}
-                    </span>
+                  <div key={label} className="bank-row" style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                    <span style={{ fontFamily: 'Georgia, serif', color: '#3A6080', fontWeight: 400, whiteSpace: 'nowrap' }}>{label}</span>
+                    <span style={{ fontFamily: 'Georgia, serif', color: '#2B4A6B', fontWeight: 700, letterSpacing: label.includes('Sort') || label.includes('Account') ? '0.05em' : '0' }}>{value}</span>
                   </div>
                 ))}
-
-                {/* Reference — separated, smaller */}
-                <div style={{
-                  borderTop: '1px solid rgba(43,74,107,0.2)',
-                  marginTop: '10px',
-                  paddingTop: '14px',
-                  display: 'flex',
-                  gap: '8px',
-                  alignItems: 'baseline',
-                }}>
-                  <span style={{
-                    fontFamily: 'Georgia, serif',
-                    fontSize: '13px',
-                    color: '#3A6080',
-                    fontWeight: 400,
-                  }}>
-                    Reference:
-                  </span>
-                  <span style={{
-                    fontFamily: 'Georgia, serif',
-                    fontSize: '13px',
-                    color: '#2B4A6B',
-                    fontWeight: 700,
-                  }}>
-                    Wedding gift
-                  </span>
+                <div className="ref-row" style={{ borderTop: '1px solid rgba(43,74,107,0.2)', marginTop: '8px', paddingTop: '12px', display: 'flex', gap: '8px', alignItems: 'baseline' }}>
+                  <span style={{ fontFamily: 'Georgia, serif', color: '#3A6080', fontWeight: 400 }}>Reference:</span>
+                  <span style={{ fontFamily: 'Georgia, serif', color: '#2B4A6B', fontWeight: 700 }}>Wedding gift</span>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>
@@ -170,19 +126,21 @@ export default function GiftingPage() {
         <img src="/images/Pattern strip.webp" alt="divider print" className="w-full h-16 md:h-20 object-cover block" />
       </div>
 
-      <section className="relative overflow-hidden py-20" style={{ backgroundColor: '#E8DCC8' }}>
-        <div className="max-w-6xl mx-auto flex justify-center gap-8">
-          {['/images/Image line 1.webp', '/images/Image line 2.webp', '/images/Image line 3.webp', '/images/Image line 4.webp'].map((src, i) => (
-            <div key={i} className="relative w-[260px] h-[260px]">
-              <Image
-                src={src}
-                alt={`Gallery ${i + 1}`}
-                fill
-                className="object-cover"
-                priority={i === 0}
-              />
-            </div>
-          ))}
+      <section className="relative overflow-hidden py-12 sm:py-20" style={{ backgroundColor: '#E8DCC8' }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-2 md:flex md:justify-center gap-4 sm:gap-8">
+            {['/images/Image line 1.webp', '/images/Image line 2.webp', '/images/Image line 3.webp', '/images/Image line 4.webp'].map((src, i) => (
+              <div key={i} className="relative w-full md:w-[260px] aspect-square md:h-[260px]">
+                <Image
+                  src={src}
+                  alt={`Gallery ${i + 1}`}
+                  fill
+                  className="object-cover"
+                  priority={i === 0}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

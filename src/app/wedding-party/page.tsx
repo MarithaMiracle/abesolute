@@ -19,15 +19,15 @@ const bridesmaids = [
   { name: 'Uzo', img: '/images/Uzo.webp' },
   { name: 'Dolapo', img: '/images/Dolapo.webp' },
   { name: 'Amandy', img: '/images/Amandy.webp' },
-  { name: 'Jess', img: '/images/Jess.webp' },
+  { name: 'Jess', img: '/images/Jess.webp', pos: 'center 25%' },
 ]
 
 const groomsmen = [
-  { name: 'Wasiu', img: '/images/Wasiu.webp' },
+  { name: 'Wasiu', img: '/images/Wasiu.webp', pos: 'center 40%' },
   { name: 'Ricky', img: 'images/Ricky.webp' },
   { name: 'Abi', img: '/images/Abi.webp' },
-  { name: 'Deji', img: '/images/Deji.webp' },
-  { name: 'Chigozie', img: '/images/Chigozie.webp' },
+  { name: 'Deji', img: '/images/Deji.webp', pos: 'center 45%' },
+  { name: 'Chigozie', img: '/images/Chigozie.webp', pos: 'center 60%' },
   { name: 'Dapo', img: '/images/Dapo.webp' },
   { name: 'Femi', img: '/images/Femi.webp' },
   { name: 'Bosoye', img: '/images/Bosoye.webp' },
@@ -50,7 +50,7 @@ function getStyle(name: string) {
   }
 }
 
-const Avatar = React.memo(function Avatar({ name, img }: { name: string; img: string }) {
+const Avatar = React.memo(function Avatar({ name, img, pos }: { name: string; img: string; pos?: string }) {
   const { tilt, vShift } = getStyle(name)
 
   const shadowX = tilt * 1.2
@@ -82,6 +82,7 @@ const Avatar = React.memo(function Avatar({ name, img }: { name: string; img: st
         ;(e.currentTarget as HTMLElement).style.zIndex = '1'
       }}
     >
+      {/* Tape strip — top left */}
       <div style={{
         position: 'absolute',
         top: '-10px',
@@ -97,6 +98,7 @@ const Avatar = React.memo(function Avatar({ name, img }: { name: string; img: st
         backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 2px, transparent 2px, transparent 6px)',
       }} />
 
+      {/* Tape strip — top right */}
       <div style={{
         position: 'absolute',
         top: '-10px',
@@ -112,6 +114,7 @@ const Avatar = React.memo(function Avatar({ name, img }: { name: string; img: st
         backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 2px, transparent 2px, transparent 6px)',
       }} />
 
+      {/* Polaroid card */}
       <div style={{
         backgroundColor: '#f5f0e8',
         padding: '8px 8px 28px 8px',
@@ -129,7 +132,7 @@ const Avatar = React.memo(function Avatar({ name, img }: { name: string; img: st
             height: '220px',
             backgroundImage: `url('${img}')`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center top',
+            backgroundPosition: pos ?? 'center top',
             backgroundColor: '#3A6186',
             filter: 'sepia(18%) saturate(88%) brightness(0.97) contrast(0.96)',
           }} />
@@ -163,17 +166,84 @@ export default function WeddingPartyPage() {
     <main className="min-h-screen bg-navy">
       <Navbar />
 
+      <style>{`
+        /* ── MOBILE: horizontal scroll row ── */
+        .party-row {
+          display: flex;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          overflow-y: visible;
+          -webkit-overflow-scrolling: touch;
+          scroll-snap-type: x mandatory;
+          gap: 20px;
+          padding: 30px 24px 50px;
+          align-items: flex-end;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .party-row::-webkit-scrollbar { display: none; }
+        .party-row > * { scroll-snap-align: start; }
+
+        /* Wrapper holds the row + the right-edge fade */
+        .party-row-wrap {
+          position: relative;
+          overflow: hidden;
+        }
+        /* Right fade — fades content into the background colour */
+        .party-row-wrap::after {
+          content: '';
+          position: absolute;
+          top: 0; right: 0; bottom: 0;
+          width: 80px;
+          background: linear-gradient(to right, rgba(30,52,72,0) 0%, #1E3448 100%);
+          pointer-events: none;
+          z-index: 10;
+        }
+
+        /* Swipe hint pill */
+        .swipe-hint {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          margin: 0 auto 16px;
+          color: rgba(218,192,167,0.55);
+          font-size: 12px;
+          letter-spacing: 0.08em;
+          font-family: sans-serif;
+        }
+        .swipe-hint svg {
+          animation: swipe-nudge 2s ease-in-out infinite;
+        }
+        @keyframes swipe-nudge {
+          0%, 100% { transform: translateX(0); opacity: 0.5; }
+          50% { transform: translateX(6px); opacity: 1; }
+        }
+
+        /* ── DESKTOP: original wrap grid, hints hidden ── */
+        @media (min-width: 768px) {
+          .party-row {
+            flex-wrap: wrap;
+            overflow-x: visible;
+            overflow-y: visible;
+            scroll-snap-type: none;
+            justify-content: center;
+            gap: 28px;
+            padding: 40px 0 60px;
+          }
+          .party-row-wrap::after { display: none; }
+          .swipe-hint { display: none; }
+        }
+      `}</style>
+
       {/* ── HERO ── */}
       <section className="relative" style={{ backgroundColor: '#1E3448', overflow: 'hidden' }}>
-        {/* Image shifted up so more of it is visible */}
         <img
           src="/images/Wedding party (hero section).webp"
           alt="Wedding party"
           style={{ width: '100%', display: 'block', marginTop: '-8%' }}
         />
-        {/* Blue overlay — same as ceremony page */}
         <div className="absolute inset-0" style={{ background: 'rgba(30,52,72,0.55)' }} />
-        {/* Gradient fade into navy at the bottom */}
         <div
           className="absolute inset-x-0 bottom-0 pointer-events-none"
           style={{
@@ -181,7 +251,6 @@ export default function WeddingPartyPage() {
             background: 'linear-gradient(to bottom, rgba(30,52,72,0) 0%, rgba(30,52,72,0.8) 55%, #1E3448 100%)',
           }}
         />
-        {/* Subtitle — constrained width, centered, sitting over the fade */}
         <div
           className="absolute inset-x-0 bottom-0 flex justify-center"
           style={{ paddingBottom: '6%' }}
@@ -190,7 +259,7 @@ export default function WeddingPartyPage() {
             className="serif-font"
             style={{
               color: '#DAC0A7',
-              fontSize: 'clamp(22px, 3vw, 36px)',
+              fontSize: 'clamp(16px, 4.5vw, 36px)',
               textAlign: 'center',
               lineHeight: 1.7,
               margin: 0,
@@ -208,31 +277,49 @@ export default function WeddingPartyPage() {
         </div>
       </section>
 
-      <section className="relative py-20 px-6" style={{ backgroundColor: '#1E3448' }}>
+      <section className="relative py-12 sm:py-20 px-0 sm:px-6" style={{ backgroundColor: '#1E3448' }}>
         <div className="relative z-10 max-w-5xl mx-auto">
-<div className="mb-14">
-            <h3 className="script-font text-cream text-center mb-8" style={{ fontSize: 'clamp(48px, 7vw, 72px)' }}>Bridesmaids</h3>
-            <div style={{ padding: '40px 0 60px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '28px', alignItems: 'flex-end' }}>
-              {bridesmaids.map((bm, i) => (
-                <Avatar key={i} name={bm.name} img={bm.img} />
-              ))}
+
+          <div className="mb-10 sm:mb-14">
+            <h3 className="script-font text-cream text-center mb-6 sm:mb-8 px-4 sm:px-0" style={{ fontSize: 'clamp(36px, 7vw, 72px)' }}>Bridesmaids</h3>
+            <div className="swipe-hint">
+              <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+                <path d="M5 7h8M10 3l4 4-4 4" stroke="rgba(218,192,167,0.8)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span>swipe to see more</span>
+            </div>
+            <div className="party-row-wrap">
+              <div className="party-row">
+                {bridesmaids.map((bm, i) => (
+                  <Avatar key={i} name={bm.name} img={bm.img} pos={bm.pos} />
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-3 my-8">
+          <div className="flex items-center justify-center gap-3 my-6 sm:my-8 px-4 sm:px-0">
             <div className="h-px w-16 bg-cream/30" />
             <div className="w-2 h-2 bg-cream/50 rotate-45" />
             <div className="h-px w-16 bg-cream/30" />
           </div>
 
           <div>
-            <h3 className="script-font text-cream text-center mb-8" style={{ fontSize: 'clamp(48px, 7vw, 72px)' }}>Groomsmen</h3>
-            <div style={{ padding: '40px 0 60px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '28px', alignItems: 'flex-end' }}>
-              {groomsmen.map((gm, i) => (
-                <Avatar key={i} name={gm.name} img={gm.img} />
-              ))}
+            <h3 className="script-font text-cream text-center mb-6 sm:mb-8 px-4 sm:px-0" style={{ fontSize: 'clamp(36px, 7vw, 72px)' }}>Groomsmen</h3>
+            <div className="swipe-hint">
+              <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+                <path d="M5 7h8M10 3l4 4-4 4" stroke="rgba(218,192,167,0.8)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span>swipe to see more</span>
+            </div>
+            <div className="party-row-wrap">
+              <div className="party-row">
+                {groomsmen.map((gm, i) => (
+                  <Avatar key={i} name={gm.name} img={gm.img} pos={gm.pos} />
+                ))}
+              </div>
             </div>
           </div>
+
         </div>
       </section>
 

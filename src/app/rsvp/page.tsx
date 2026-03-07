@@ -71,7 +71,7 @@ export default function RSVPPage() {
       {/* ── HERO BANNER ── */}
       <section className="relative pt-0 pb-0">
         <div
-          className="relative h-72 md:h-96 overflow-hidden"
+          className="relative h-52 sm:h-72 md:h-96 overflow-hidden"
           style={{
             backgroundImage: "url('/images/RSVP page (hands).webp')",
             backgroundSize: 'cover',
@@ -79,12 +79,12 @@ export default function RSVPPage() {
             backgroundColor: '#8AAEC2',
           }}
         >
-          <div className="relative z-10 h-full flex flex-col justify-end pb-12 px-12 md:px-20">
-            <h1 className="serif-font text-8xl md:text-5xl font-semibold text-navy-true leading-tight max-w-md">
+          <div className="relative z-10 h-full flex flex-col justify-end pb-8 sm:pb-12 px-6 sm:px-12 md:px-20">
+            <h1 className="serif-font text-3xl sm:text-5xl md:text-5xl font-semibold text-navy-true leading-tight max-w-md">
               Kindly Confirm<br />
               <span className="text-navy-true">Your </span><span className="text-blue-soft">Attendance</span>
             </h1>
-            <p className="text-black/70 text-lg mt-3 max-w-sm font-sans">
+            <p className="text-black/70 text-sm sm:text-lg mt-2 sm:mt-3 max-w-sm font-sans hidden sm:block">
               We are honoured to celebrate our traditional wedding with you. Please complete the form below to let us know if you will be joining us.
             </p>
           </div>
@@ -92,7 +92,7 @@ export default function RSVPPage() {
       </section>
 
       {/* ── RSVP FORM SECTION ── */}
-      <section className="relative py-16 px-6" style={{ minHeight: '100vh' }}>
+      <section className="relative py-10 sm:py-16 px-4 sm:px-6" style={{ minHeight: '100vh' }}>
 
         {/* Layer 1: pattern — base */}
         <div
@@ -123,86 +123,92 @@ export default function RSVPPage() {
         {/* Layer 3: navy tint over both */}
         <div className="absolute inset-0" style={{ background: 'rgba(15,30,48,0.65)' }} />
 
-        <div className="relative z-10 max-w-3xl md:max-w-2xl mx-auto">
+        <div className="relative z-10 w-[92vw] sm:w-full sm:max-w-xl md:max-w-2xl mx-auto">
 
-          <h2 className="font-sans font-semibold mb-8" style={{ color: '#ffffff', fontSize: '2.25rem', letterSpacing: '0.02em' }}>
+          <h2 className="font-sans font-semibold mb-6 sm:mb-8" style={{ color: '#ffffff', fontSize: 'clamp(1.5rem, 5vw, 2.25rem)', letterSpacing: '0.02em' }}>
             RSVP
           </h2>
 
-          <div className="backdrop-blur-sm w-full aspect-square p-10 md:p-12 shadow-2xl border border-white/10 relative overflow-hidden" style={{ backgroundColor: '#B9CCDC', borderRadius: '28px' }}>
+          <div className="backdrop-blur-sm w-full sm:aspect-square p-5 sm:p-10 md:p-12 pb-16 sm:pb-10 md:pb-12 shadow-2xl border border-white/10 relative overflow-visible sm:overflow-hidden" style={{ backgroundColor: '#B9CCDC', borderRadius: '28px' }}>
             <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "url('/images/Form box overlay.webp')", backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundSize: '100% 100%', opacity: 0.9 }} />
 
             <div className="relative z-10 flex flex-col h-full">
               {!submitted ? (
                 <>
-                  <div className="mb-6 my-auto">
-                    <p className="text-black/40 text-base font-sans">Kindly fill in your full information here</p>
+                  <div className="mb-3 sm:mb-6">
+                    <p className="text-black/40 text-xs sm:text-base font-sans">Kindly fill in your full information here</p>
                   </div>
 
                   <div className="flex-1 grid place-items-center">
 
                     {step === 0 && (
-                      <div className="pb-30 my-auto">
-                        <h3 className="serif-font text-5xl font-bold text-blue mb-8">
-                          Important<br />information
-                        </h3>
-                        <div className="mb-8 rounded-xl px-5 py-4" style={{ backgroundColor: 'rgba(255,255,255,0.25)', color: '#525456', borderColor: 'rgba(255,255,255,0.3)' }}>
-                          <p className="font-sans text-base leading-relaxed">
-                            <span className="font-semibold">Kindly note:</span> This wedding is strictly by invitation only. Only guests invited by the couple and their family will be accommodated — no additional plus-ones and children.
-                          </p>
+                      <div className="w-full flex flex-col justify-between" style={{ minHeight: '70%' }}>
+                        <div>
+                          <h3 className="serif-font text-2xl sm:text-5xl font-bold text-blue mb-4 sm:mb-8">
+                            Important<br />information
+                          </h3>
+                          <div className="rounded-xl px-4 sm:px-5 py-3 sm:py-4" style={{ backgroundColor: 'rgba(255,255,255,0.25)', color: '#525456' }}>
+                            <p className="font-sans text-xs sm:text-base leading-relaxed">
+                              <span className="font-semibold">Kindly note:</span> This wedding is strictly by invitation only. Only guests invited by the couple and their family will be accommodated — no additional plus-ones and children.
+                            </p>
+                          </div>
                         </div>
-                        <div className="absolute bottom-6 left-10 right-10 md:left-12 md:right-12 flex justify-end">
+                        <div className="flex justify-end mt-4 sm:mt-0 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
                           <button
                             onClick={() => setStep(1)}
-                            className="flex items-center gap-2 font-sans text-sm px-6 py-2.5 rounded-xl transition-all hover:bg-[#98ABC0]"
+                            className="flex items-center gap-2 font-sans text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl transition-all hover:bg-[#98ABC0]"
                             style={{ backgroundColor: '#05233D', color: '#ffffff' }}
                           >
-                            Next <span className="text-lg">»</span>
+                            Next <span className="text-sm sm:text-lg">»</span>
                           </button>
                         </div>
                       </div>
                     )}
 
                     {step === 1 && (
-                      <form onSubmit={(e) => { e.preventDefault(); setStep(2) }} className="pb-28">
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-                          <div className="text-left my-auto md:col-span-4 md:pr-6 max-w-xs">
+                      <form onSubmit={(e) => { e.preventDefault(); setStep(2) }} className="pb-14 sm:pb-28 w-full">
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-8 items-start">
+                          <div className="text-left my-auto md:col-span-4 md:pr-6 max-w-xs hidden md:block">
                             <h3 className="serif-font my-auto max-w-xs text-5xl font-semibold text-navy-dark mb-2">
                               Guest <br />details:
                               <br />
                               <span className="text-sm items-start text-black/50 inline-block max-w-xs mt-10 leading-snug">Your information will only be used for wedding communication. Please enter your full name, no initials or nicknames.</span>
                             </h3>
                           </div>
-                          <div className="space-y-4 md:col-span-8">
-                            <p className="text-black/50 text-sm font-sans mt-4">Please enter your name exactly as you want it to appear on your invitation</p>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="block md:hidden mb-1">
+                            <h3 className="serif-font text-xl font-semibold text-navy-dark">Guest details:</h3>
+                            <p className="text-xs text-black/50 mt-0.5 leading-snug">Full name only, no initials or nicknames.</p>
+                          </div>
+                          <div className="space-y-2 sm:space-y-4 md:col-span-8">
+                            <p className="text-black/50 text-xs sm:text-sm font-sans hidden sm:block">Please enter your name exactly as you want it to appear on your invitation</p>
+                            <div className="grid grid-cols-2 gap-2 sm:gap-4">
                               <div>
-                                <label className="block text-blue/70 text-base font-sans mb-1.5 tracking-wide">First Name *</label>
+                                <label className="block text-blue/70 text-xs sm:text-base font-sans mb-1 sm:mb-1.5 tracking-wide">First Name *</label>
                                 <input
                                   type="text"
                                   name="firstName"
                                   required
                                   value={form.firstName}
                                   onChange={handleChange}
-                                  placeholder="Enter your first name"
-                                  className="w-full bg-white border border-navy/50 text-black placeholder-black/50 rounded-xl px-4 py-3 text-sm font-sans focus:outline-none focus:border-white/50 focus:bg-white/50 transition-all"
+                                  placeholder="First name"
+                                  className="w-full bg-white border border-navy/50 text-black placeholder-black/50 rounded-xl px-3 py-2 sm:py-3 text-xs sm:text-sm font-sans focus:outline-none focus:border-white/50 focus:bg-white/50 transition-all"
                                 />
                               </div>
                               <div>
-                                <label className="block text-blue/70 text-base font-sans mb-1.5 tracking-wide">Surname *</label>
+                                <label className="block text-blue/70 text-xs sm:text-base font-sans mb-1 sm:mb-1.5 tracking-wide">Surname *</label>
                                 <input
                                   type="text"
                                   name="surname"
                                   required
                                   value={form.surname}
                                   onChange={handleChange}
-                                  placeholder="Enter your surname"
-                                  className="w-full bg-white border border-navy/50 text-black placeholder-black/50 rounded-xl px-4 py-3 text-sm font-sans focus:outline-none focus:border-white/50 focus:bg-white/50 transition-all"
+                                  placeholder="Surname"
+                                  className="w-full bg-white border border-navy/50 text-black placeholder-black/50 rounded-xl px-3 py-2 sm:py-3 text-xs sm:text-sm font-sans focus:outline-none focus:border-white/50 focus:bg-white/50 transition-all"
                                 />
                               </div>
                             </div>
                             <div>
-                              <label className="block text-blue/70 text-base font-sans mb-1.5 tracking-wide">Email Address *</label>
+                              <label className="block text-blue/70 text-xs sm:text-base font-sans mb-1 sm:mb-1.5 tracking-wide">Email Address *</label>
                               <input
                                 type="email"
                                 name="email"
@@ -210,70 +216,70 @@ export default function RSVPPage() {
                                 value={form.email}
                                 onChange={handleChange}
                                 placeholder="your@email.com"
-                                className="w-full bg-white border border-navy/50 text-black placeholder-black/50 rounded-xl px-4 py-3 text-sm font-sans focus:outline-none focus:border-white/50 focus:bg-white/50 transition-all"
+                                className="w-full bg-white border border-navy/50 text-black placeholder-black/50 rounded-xl px-3 py-2 sm:py-3 text-xs sm:text-sm font-sans focus:outline-none focus:border-white/50 focus:bg-white/50 transition-all"
                               />
                             </div>
                             <div>
-                              <label className="block text-blue/70 text-base font-sans mb-1.5 tracking-wide">Phone Number</label>
+                              <label className="block text-blue/70 text-xs sm:text-base font-sans mb-1 sm:mb-1.5 tracking-wide">Phone Number</label>
                               <input
                                 type="tel"
                                 name="phone"
                                 value={form.phone}
                                 onChange={handleChange}
                                 placeholder="+44 000 000 0000"
-                                className="w-full bg-white border border-navy/50 text-black placeholder-black/50 rounded-xl px-4 py-3 text-sm font-sans focus:outline-none focus:border-white/50 focus:bg-white/50 transition-all"
+                                className="w-full bg-white border border-navy/50 text-black placeholder-black/50 rounded-xl px-3 py-2 sm:py-3 text-xs sm:text-sm font-sans focus:outline-none focus:border-white/50 focus:bg-white/50 transition-all"
                               />
                             </div>
                           </div>
                         </div>
-                        <div className="absolute bottom-6 left-10 right-10 md:left-12 md:right-12 flex justify-between">
-                          <button type="button" onClick={() => setStep(0)} className="text-navy-true/50 text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
-                          <button type="submit" className="flex items-center gap-2 bg-navy-true text-white font-sans text-sm px-6 py-2.5 rounded-xl hover:bg-blue-muted/80 transition-all">
-                            Next <span className="text-lg">»</span>
+                        <div className="flex justify-between mt-6 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
+                          <button type="button" onClick={() => setStep(0)} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
+                          <button type="submit" className="flex items-center gap-2 bg-navy-true text-white font-sans text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:bg-blue-muted/80 transition-all">
+                            Next <span className="text-sm sm:text-lg">»</span>
                           </button>
                         </div>
                       </form>
                     )}
 
                     {step === 2 && (
-                      <form onSubmit={(e) => { e.preventDefault(); setStep(3) }} className="space-y-6 pb-28">
-                        <h3 className="serif-font text-5xl font-semibold text-navy-true mb-20">Will you be attending our wedding?</h3>
+                      <form onSubmit={(e) => { e.preventDefault(); setStep(3) }} className="space-y-6 pb-20 sm:pb-28">
+                        <h3 className="serif-font text-3xl sm:text-5xl font-semibold text-navy-true mb-6 sm:mb-20">Will you be attending our wedding?</h3>
                         <div className="space-y-3">
                           <label className="flex gap-3">
                             <input type="checkbox" name="attendance" value="yes" checked={form.attendance === 'yes'} onChange={handleChange} className="accent-cream transform scale-150" />
-                            <span className="text-navy-true font-sans text-2xl">Yes, joyfully attending</span>
+                            <span className="text-navy-true font-sans text-lg sm:text-2xl">Yes, joyfully attending</span>
                           </label>
                           <label className="flex items-center gap-3">
                             <input type="checkbox" name="attendance" value="no" checked={form.attendance === 'no'} onChange={handleChange} className="accent-cream transform scale-150" />
-                            <span className="text-navy-true font-sans text-2xl">No, sorry unable to attend</span>
+                            <span className="text-navy-true font-sans text-lg sm:text-2xl">No, sorry unable to attend</span>
                           </label>
                         </div>
-                        <div className="absolute bottom-6 left-10 right-10 md:left-12 md:right-12 flex justify-between">
-                          <button type="button" onClick={() => setStep(1)} className="text-navy-true/50 text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
-                          <button type="submit" className="flex items-center gap-2 bg-navy-true text-white font-sans text-sm px-6 py-2.5 rounded-xl hover:bg-blue-muted/80 transition-all">Next <span className="text-lg">»</span></button>
+                        <div className="flex justify-between mt-6 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
+                          <button type="button" onClick={() => setStep(1)} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
+                          <button type="submit" className="flex items-center gap-2 bg-navy-true text-white font-sans text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:bg-blue-muted/80 transition-all">Next <span className="text-sm sm:text-lg">»</span></button>
                         </div>
                       </form>
                     )}
 
                     {step === 3 && (
-                      <div className="space-y-6 pb-28">
-                        <h3 className="serif-font text-5xl font-semibold text-navy-true mb-10">Are you RSVP'ing for another invited guest(s)?</h3>
+                      <div className="space-y-6 pb-20 sm:pb-28">
+                        <h3 className="serif-font text-3xl sm:text-5xl font-semibold text-navy-true mb-6 sm:mb-10">Are you RSVP'ing for another invited guest(s)?</h3>
                         <div className="flex gap-4">
                           <button className="px-6 py-3 rounded-xl hover:bg-[#98ABC0] transition-all" style={{ backgroundColor: moreGuests ? '#05233D' : 'rgba(130,157,182,0.4)', color: '#fff' }} onClick={() => setMoreGuests(true)}>YES</button>
                           <button className="px-6 py-3 rounded-xl hover:bg-[#98ABC0] transition-all" style={{ backgroundColor: !moreGuests ? '#05233D' : 'rgba(130,157,182,0.4)', color: '#fff' }} onClick={() => setMoreGuests(false)}>NO</button>
                         </div>
-                        <div className="absolute bottom-6 left-10 right-10 md:left-12 md:right-12 flex justify-between">
-                          <button type="button" onClick={() => setStep(2)} className="text-navy-true/50 text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
-                          <button type="button" onClick={() => setStep(moreGuests ? 4 : 5)} className="flex items-center gap-2 bg-navy-true text-white font-sans text-lg px-6 py-2.5 rounded-xl hover:bg-blue-muted/80 transition-all">Next <span className="text-lg">»</span></button>
+                        <div className="flex justify-between mt-6 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
+                          <button type="button" onClick={() => setStep(2)} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
+                          <button type="button" onClick={() => setStep(moreGuests ? 4 : 5)} className="flex items-center gap-2 bg-navy-true text-white font-sans text-xs sm:text-lg px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:bg-blue-muted/80 transition-all">Next <span className="text-sm sm:text-lg">»</span></button>
                         </div>
                       </div>
                     )}
 
                     {step === 4 && (
-                      <form onSubmit={(e) => { e.preventDefault(); setStep(5) }} className="space-y-6 pb-28">
+                      <form onSubmit={(e) => { e.preventDefault(); setStep(5) }} className="space-y-6 pb-20 sm:pb-28">
                         {moreGuests && (
                           <div>
-                            <h3 className="serif-font text-5xl font-semibold text-navy-true mb-10">Please provide details of other invited guest(s)</h3>
+                            <h3 className="serif-font text-xl sm:text-5xl font-semibold text-navy-true mb-4 sm:mb-10">Please provide details of other invited guest(s)</h3>
                             <p className="text-black/50 text-sm font-sans mb-4">Add the full name of each additional guest</p>
                             <div className="space-y-3">
                               {guestList.map((guest, i) => (
@@ -306,20 +312,20 @@ export default function RSVPPage() {
                             </div>
                           </div>
                         )}
-                        <div className="absolute bottom-6 left-10 right-10 md:left-12 md:right-12 flex justify-between">
-                          <button type="button" onClick={() => setStep(3)} className="text-navy-true/50 text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
-                          <button type="submit" className="flex items-center gap-2 bg-navy-true text-white font-sans text-sm px-6 py-2.5 rounded-xl hover:bg-blue-muted/80 transition-all">Next <span className="text-lg">»</span></button>
+                        <div className="flex justify-between mt-6 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
+                          <button type="button" onClick={() => setStep(3)} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
+                          <button type="submit" className="flex items-center gap-2 bg-navy-true text-white font-sans text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:bg-blue-muted/80 transition-all">Next <span className="text-sm sm:text-lg">»</span></button>
                         </div>
                       </form>
                     )}
 
                     {step === 5 && (
-                      <form onSubmit={handleSubmit} className="space-y-6 pb-28">
-                        <h3 className="serif-font text-5xl font-semibold text-navy-true mb-2">Kindly leave a message for the couple</h3>
-                        <textarea name="message" value={form.message} onChange={handleChange} rows={5} placeholder="Type your message here" className="w-full bg-white border border-navy/50 text-black placeholder-black/50 rounded-xl px-4 py-3 text-sm font-sans focus:outline-none focus:border-white/50 focus:bg-white/25 transition-all resize-none" />
-                        <div className="absolute bottom-6 left-10 right-10 md:left-12 md:right-12 flex justify-between">
-                          <button type="button" onClick={() => setStep(moreGuests ? 4 : 3)} className="text-navy-true/50 text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
-                          <button type="submit" className="bg-navy-true text-white font-sans font-medium text-lg px-8 py-2.5 rounded-xl hover:bg-cream/90 hover:text-navy-true transition-all shadow-md">Submit</button>
+                      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-6 sm:pb-28">
+                        <h3 className="serif-font text-xl sm:text-5xl font-semibold text-navy-true mb-2">Kindly leave a message for the couple</h3>
+                        <textarea name="message" value={form.message} onChange={handleChange} rows={3} placeholder="Type your message here" className="w-full bg-white border border-navy/50 text-black placeholder-black/50 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-sm font-sans focus:outline-none focus:border-white/50 focus:bg-white/25 transition-all resize-none" />
+                        <div className="flex justify-between mt-4 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
+                          <button type="button" onClick={() => setStep(moreGuests ? 4 : 3)} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
+                          <button type="submit" className="bg-navy-true text-white font-sans font-medium text-sm sm:text-lg px-5 sm:px-8 py-2 sm:py-2.5 rounded-xl hover:bg-cream/90 hover:text-navy-true transition-all shadow-md">Submit</button>
                         </div>
                       </form>
                     )}
@@ -327,10 +333,10 @@ export default function RSVPPage() {
                   </div>
                 </>
               ) : (
-                <div className="flex flex-col h-full pb-28">
+                <div className="flex flex-col h-full pb-20 sm:pb-28">
                   <div className="flex-1 grid place-items-center">
-                    <div className="flex flex-col items-center gap-8">
-                      <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div className="flex flex-col items-center gap-6 sm:gap-8">
+                      <svg width="100" height="100" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg" className="sm:w-[140px] sm:h-[140px]">
                         <polygon
                           points={(() => {
                             const cx = 70, cy = 70, outer = 58, inner = 42, spikes = 12;
@@ -355,13 +361,13 @@ export default function RSVPPage() {
                         />
                         <path d="M52 72 L66 86 L92 60" stroke="white" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
-                      <p className="serif-font text-4xl text-navy-true text-center max-w-md">
+                      <p className="serif-font text-2xl sm:text-4xl text-navy-true text-center max-w-md px-2">
                         <span className="font-bold">Thank you</span> for providing your details, we look forward to celebrating with you!
                       </p>
                     </div>
                   </div>
-                  <div className="absolute bottom-6 left-10 right-10 md:left-12 md:right-12 flex justify-between">
-                    <button type="button" onClick={() => { setSubmitted(false); setStep(2) }} className="text-navy-true/50 text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
+                  <div className="flex justify-between mt-4 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
+                    <button type="button" onClick={() => { setSubmitted(false); setStep(2) }} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
                   </div>
                 </div>
               )}
@@ -375,19 +381,21 @@ export default function RSVPPage() {
         <img src="/images/Pattern strip.webp" alt="divider print" className="w-full h-16 md:h-20 object-cover block" />
       </div>
 
-      <section className="relative overflow-hidden py-20" style={{ backgroundColor: '#E8DCC8' }}>
-        <div className="max-w-6xl mx-auto flex justify-center gap-8">
-          {['/images/Image line 1.webp', '/images/Image line 2.webp', '/images/Image line 3.webp', '/images/Image line 4.webp'].map((src, i) => (
-            <div key={i} className="relative w-[260px] h-[260px]">
-              <Image
-                src={src}
-                alt={`Gallery ${i + 1}`}
-                fill
-                className="object-cover"
-                priority={i === 0}
-              />
-            </div>
-          ))}
+      <section className="relative overflow-hidden py-12 sm:py-20" style={{ backgroundColor: '#E8DCC8' }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-2 md:flex md:justify-center gap-4 sm:gap-8">
+            {['/images/Image line 1.webp', '/images/Image line 2.webp', '/images/Image line 3.webp', '/images/Image line 4.webp'].map((src, i) => (
+              <div key={i} className="relative w-full md:w-[260px] aspect-square md:h-[260px]">
+                <Image
+                  src={src}
+                  alt={`Gallery ${i + 1}`}
+                  fill
+                  className="object-cover"
+                  priority={i === 0}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

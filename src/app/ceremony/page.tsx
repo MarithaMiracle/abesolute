@@ -49,7 +49,7 @@ export default function CeremonyPage() {
   return (
     <main className="min-h-screen" style={{ backgroundColor: '#1E3448', position: 'relative' }}>
 
-      {/* ── BACKGROUND LAYER ── */}
+      {/* ── BACKGROUND LAYER — unchanged ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
         <div style={{ position: 'absolute', inset: '0 0 auto 0', height: '120vh', backgroundImage: "url('/images/Ceremony (hero section).webp')", backgroundSize: 'cover', backgroundPosition: 'center top' }} />
         <div style={{ position: 'absolute', inset: '0 0 auto 0', height: '120vh', background: 'rgba(30,52,72,0.55)' }} />
@@ -63,21 +63,21 @@ export default function CeremonyPage() {
         <Navbar />
 
         <section className="relative min-h-[60vh] md:min-h-[70vh]">
-          <div className="relative z-10 pt-36 px-8 md:px-16 flex flex-col justify-start">
+          <div className="relative z-10 pt-24 sm:pt-36 px-4 sm:px-8 md:px-16 flex flex-col justify-start">
 
-            {/* Giant date numbers */}
+            {/* Giant date numbers — clamp down on mobile */}
             <div className="text-white/90 serif-font">
-              <div className="text-[100px] md:text-[160px] font-light leading-none opacity-80">04</div>
-              <div className="text-[100px] md:text-[160px] font-light leading-none opacity-80 -mt-6">07</div>
-              <div className="text-[100px] md:text-[160px] font-light leading-none text-[#DAC0A7] opacity-80 -mt-6">26</div>
+              <div className="text-[clamp(56px,18vw,100px)] md:text-[160px] font-light leading-none opacity-80">04</div>
+              <div className="text-[clamp(56px,18vw,100px)] md:text-[160px] font-light leading-none opacity-80 -mt-2 md:-mt-6">07</div>
+              <div className="text-[clamp(56px,18vw,100px)] md:text-[160px] font-light leading-none text-[#DAC0A7] opacity-80 -mt-2 md:-mt-6">26</div>
             </div>
 
             {/* Cards area */}
-            <div className="relative flex justify-center mt-56 md:mt-80">
+            <div className="relative flex justify-center mt-16 sm:mt-40 md:mt-80">
 
               {/* ── CREAM INFO CARD ── */}
               <div
-                className="relative mb-32 md:mb-40"
+                className="relative mb-16 sm:mb-32 md:mb-40"
                 style={{
                   backgroundColor: '#E8DCC8',
                   borderRadius: '12px',
@@ -88,20 +88,23 @@ export default function CeremonyPage() {
                   flexDirection: 'column',
                 }}
               >
-                {/* Spacer — pushes content below the overlapping blue box */}
-                <div style={{ height: '220px', flexShrink: 0 }} />
+                {/* Spacer — reduced on mobile since blue card is smaller there */}
+                <div className="block md:hidden" style={{ height: '130px', flexShrink: 0 }} />
+                <div className="hidden md:block" style={{ height: '220px', flexShrink: 0 }} />
 
-                {/* Two-column layout using grid for precise row alignment */}
+                {/* Two-column grid — unchanged layout, just scaled values */}
                 <div style={{ display: 'grid', gridTemplateColumns: '0.35fr 0.65fr' }}>
                   {ceremonyDetails.map((item, i) => (
                     <div key={i} style={{ display: 'contents' }}>
                       {/* Icon cell */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 24px' }}>
-                        {item.icon}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(14px,3vw,32px) clamp(8px,2vw,24px)' }}>
+                        <div className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 relative flex-shrink-0">
+                          <Image src={item.icon.props.src} alt={item.icon.props.alt} fill style={{ objectFit: 'contain' }} />
+                        </div>
                       </div>
-                      {/* Text cell with divider */}
-                      <div style={{ padding: '32px 28px', borderLeft: '1px solid rgba(74,107,138,0.3)' }}>
-                        <p className="script-font" style={{ fontSize: '26px', color: '#2B4A6B', margin: '0 0 6px', lineHeight: 1.2 }}>
+                      {/* Text cell */}
+                      <div style={{ padding: 'clamp(14px,3vw,32px) clamp(10px,2.5vw,28px)', borderLeft: '1px solid rgba(74,107,138,0.3)' }}>
+                        <p className="script-font" style={{ fontSize: 'clamp(15px,4vw,26px)', color: '#2B4A6B', margin: '0 0 4px', lineHeight: 1.2 }}>
                           {item.label}
                         </p>
                         {item.valueLarge ? (
@@ -109,7 +112,9 @@ export default function CeremonyPage() {
                             {item.valueLines.map((line, j) => (
                               <p key={j} style={{
                                 fontFamily: 'Georgia, serif',
-                                fontSize: item.label === 'Time' && j === 1 ? '15px' : '26px',
+                                fontSize: item.label === 'Time' && j === 1
+                                  ? 'clamp(10px,2.5vw,15px)'
+                                  : 'clamp(15px,4vw,26px)',
                                 fontWeight: item.label === 'Time' && j === 1 ? 400 : 700,
                                 fontStyle: item.label === 'Time' && j === 1 ? 'italic' : 'normal',
                                 color: '#1E3448',
@@ -120,26 +125,23 @@ export default function CeremonyPage() {
                               </p>
                             ))}
                             {item.label === 'Time' && (
-                              <p style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: '15px', color: 'rgba(30,52,72,0.6)', lineHeight: 1.8, marginTop: '10px' }}>
+                              <p style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 'clamp(9px,2vw,15px)', color: 'rgba(30,52,72,0.6)', lineHeight: 1.7, marginTop: '8px' }}>
                                 Kindly honour the couple and our tradition by arriving on time. Late arrivals can be disruptive, and we would truly appreciate your <strong style={{ fontStyle: 'normal', fontWeight: 700, color: 'rgba(30,52,72,0.75)' }}>punctuality.</strong>
                               </p>
                             )}
                           </div>
                         ) : (
-                          <p style={{ fontFamily: 'Georgia, serif', fontSize: '14px', fontWeight: 600, color: '#1E3448', margin: 0, lineHeight: 1.6 }}>
+                          <p style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(10px,2.5vw,14px)', fontWeight: 600, color: '#1E3448', margin: 0, lineHeight: 1.6 }}>
                             {item.value}
                           </p>
                         )}
-                        {/* Row divider inside text cell */}
                         {i < ceremonyDetails.length - 1 && (
-                          <hr style={{ border: 'none', borderTop: '1px solid rgba(74,107,138,0.25)', marginTop: '16px' }} />
+                          <hr style={{ border: 'none', borderTop: '1px solid rgba(74,107,138,0.25)', marginTop: 'clamp(8px,2vw,16px)' }} />
                         )}
                       </div>
                     </div>
                   ))}
                 </div>
-
-                {/* Note moved into Time section */}
 
               </div>
 
@@ -147,7 +149,7 @@ export default function CeremonyPage() {
               <div
                 className="absolute top-10 left-1/2"
                 style={{
-                  width: 'min(60vw, 380px)',
+                  width: 'min(72vw, 380px)',
                   backgroundColor: '#05233D',
                   borderRadius: '14px',
                   transform: 'translate(-50%,-50%)',
@@ -155,16 +157,24 @@ export default function CeremonyPage() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '56px 28px',
+                  padding: 'clamp(20px,4vw,56px) clamp(14px,3vw,28px)',
                   overflow: 'visible',
                 }}
               >
-                <Image src="/images/Wedding rings icon.webp" alt="Rings" width={140} height={100} style={{ position: 'absolute', top: '-60px', left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none' }} />
+                {/* Ring icon hidden on mobile — would clip off screen */}
+                <Image
+                  src="/images/Wedding rings icon.webp"
+                  alt="Rings"
+                  width={140}
+                  height={100}
+                  className="hidden sm:block"
+                  style={{ position: 'absolute', top: '-60px', left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none' }}
+                />
                 <p
                   className="ibarra-font italic"
                   style={{
                     color: '#DAC0A7',
-                    fontSize: 'clamp(16px, 1.8vw, 22px)',
+                    fontSize: 'clamp(11px,3vw,22px)',
                     textAlign: 'center',
                     lineHeight: 1.7,
                     margin: 0,
