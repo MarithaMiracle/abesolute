@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
 
     try {
       await resend.emails.send({
-        from: 'RSVP <onboarding@resend.dev>',
+        from: 'RSVP <rsvp@abesolutelovestory.com>',
         to: process.env.CLIENT_EMAIL!,
         subject: `New RSVP — ${body['First Name']} ${body['Surname']}`,
         html: `
