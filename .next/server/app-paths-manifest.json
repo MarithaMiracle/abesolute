@@ -1,1 +1,7 @@
-{}
+{
+  "/page": "app/page.js",
+  "/wedding-party/page": "app/wedding-party/page.js",
+  "/gifting/page": "app/gifting/page.js",
+  "/ceremony/page": "app/ceremony/page.js",
+  "/rsvp/page": "app/rsvp/page.js"
+}

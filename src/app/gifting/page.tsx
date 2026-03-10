@@ -115,6 +115,19 @@ export default function GiftingPage() {
                   <span style={{ fontFamily: 'Georgia, serif', color: '#3A6080', fontWeight: 400 }}>Reference:</span>
                   <span style={{ fontFamily: 'Georgia, serif', color: '#2B4A6B', fontWeight: 700 }}>Wedding gift</span>
                 </div>
+                <div style={{ borderTop: '1px solid rgba(43,74,107,0.2)', marginTop: '8px', paddingTop: '12px' }}>
+                  <p style={{ fontFamily: 'Georgia, serif', color: '#3A6080', fontWeight: 400, marginBottom: '6px' }}>
+                    Alternatively, you can use the link below, which will direct you to a secure payment page:
+                  </p>
+                  <a
+                    href="https://monzo.me/feyisayoolukemiabe?h=pkkM9Q"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ fontFamily: 'Georgia, serif', color: '#2B4A6B', fontWeight: 700, wordBreak: 'break-all' }}
+                  >
+                    monzo.me/feyisayoolukemiabe
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -122,27 +135,35 @@ export default function GiftingPage() {
       </section>
 
       {/* ── PHOTO STRIP ── */}
-      <div className="relative w-screen left-1/2 -translate-x-1/2">
-        <img src="/images/Pattern strip.webp" alt="divider print" className="w-full h-16 md:h-20 object-cover block" />
-      </div>
-
-      <section className="relative overflow-hidden py-12 sm:py-20" style={{ backgroundColor: '#E8DCC8' }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 md:flex md:justify-center gap-4 sm:gap-8">
-            {['/images/Image line 1.webp', '/images/Image line 2.webp', '/images/Image line 3.webp', '/images/Image line 4.webp'].map((src, i) => (
-              <div key={i} className="relative w-full md:w-[260px] aspect-square md:h-[260px]">
-                <Image
-                  src={src}
-                  alt={`Gallery ${i + 1}`}
-                  fill
-                  className="object-cover"
-                  priority={i === 0}
-                />
+            <div className="relative w-screen left-1/2 -translate-x-1/2">
+              <img src="/images/Pattern strip.webp" alt="divider print" className="w-full h-16 md:h-20 object-cover block" />
+            </div>
+      
+            <section className="relative overflow-hidden py-12 sm:py-20" style={{ backgroundColor: '#E8DCC8' }}>
+              <div className="max-w-6xl mx-auto px-4 sm:px-6">
+                <div className="grid grid-cols-2 md:flex md:justify-center gap-4 sm:gap-8">
+                  {[
+        { src: '/images/hkuxlxi35zi0bvr1rrxi.webp', pos: 'center center' },
+        { src: '/images/Wedding party (hero section).webp', pos: 'center center' },
+        { src: '/images/Ceremony (hero section).webp', pos: 'center 0%' },
+        { src: '/images/skojadputzasppo0ubmv.webp', pos: 'center center' },
+      ].map((img, i) => (
+        <div key={i} className="relative w-full md:w-[260px] aspect-square md:h-[260px]">
+          <Image
+            src={img.src}
+            alt={`Gallery ${i + 1}`}
+            fill
+            sizes="(max-width: 640px) 45vw, 260px"
+            quality={100}
+            className="object-cover"
+            style={{ objectPosition: img.pos }}
+            priority={i === 0}
+          />
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </section>
 
       <Footer />
       </div>

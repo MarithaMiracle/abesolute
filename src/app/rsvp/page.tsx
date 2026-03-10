@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
 import Image from 'next/image'
@@ -29,6 +29,19 @@ export default function RSVPPage() {
   const [submitted, setSubmitted] = useState(false)
   const [moreGuests, setMoreGuests] = useState(false)
   const [guestList, setGuestList] = useState<string[]>([''])
+
+  useEffect(() => {
+  if (submitted) {
+    const timer = setTimeout(() => {
+      setSubmitted(false)
+      setStep(0)
+      setForm({ firstName: '', surname: '', email: '', phone: '', attendance: '', otherGuests: '', message: '' })
+      setMoreGuests(false)
+      setGuestList([''])
+    }, 4000)
+    return () => clearTimeout(timer)
+  }
+}, [submitted])
 
   const addGuest = () => setGuestList(prev => [...prev, ''])
   const removeGuest = (i: number) => setGuestList(prev => prev.filter((_, idx) => idx !== i))
@@ -384,15 +397,23 @@ export default function RSVPPage() {
       <section className="relative overflow-hidden py-12 sm:py-20" style={{ backgroundColor: '#E8DCC8' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:flex md:justify-center gap-4 sm:gap-8">
-            {['/images/Image line 1.webp', '/images/Image line 2.webp', '/images/Image line 3.webp', '/images/Image line 4.webp'].map((src, i) => (
-              <div key={i} className="relative w-full md:w-[260px] aspect-square md:h-[260px]">
-                <Image
-                  src={src}
-                  alt={`Gallery ${i + 1}`}
-                  fill
-                  className="object-cover"
-                  priority={i === 0}
-                />
+            {[
+  { src: '/images/hkuxlxi35zi0bvr1rrxi.webp', pos: 'center center' },
+  { src: '/images/Wedding party (hero section).webp', pos: 'center center' },
+  { src: '/images/Ceremony (hero section).webp', pos: 'center 0%' },
+  { src: '/images/skojadputzasppo0ubmv.webp', pos: 'center center' },
+].map((img, i) => (
+  <div key={i} className="relative w-full md:w-[260px] aspect-square md:h-[260px]">
+    <Image
+      src={img.src}
+      alt={`Gallery ${i + 1}`}
+      fill
+      sizes="(max-width: 640px) 45vw, 260px"
+      quality={100}
+      className="object-cover"
+      style={{ objectPosition: img.pos }}
+      priority={i === 0}
+    />
               </div>
             ))}
           </div>

@@ -12,6 +12,6 @@ out/
 .env.test.local
 
 # Tooling / misc
-.vercel/
+.vercel/ . . . . . . . . . . . . 
 coverage/
 .DS_Store

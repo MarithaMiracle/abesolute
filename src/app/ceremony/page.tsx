@@ -25,7 +25,7 @@ const ceremonyDetails = [
     ),
     label: 'Time',
     valueLarge: true,
-    valueLines: ['12:15pm', 'to', '10:30pm'],
+    valueLines: ['12:00pm', 'to', '10:30pm'],
   },
   {
     icon: (
@@ -126,8 +126,10 @@ export default function CeremonyPage() {
                             ))}
                             {item.label === 'Time' && (
                               <p style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', fontSize: 'clamp(9px,2vw,15px)', color: 'rgba(30,52,72,0.6)', lineHeight: 1.7, marginTop: '8px' }}>
-                                Kindly honour the couple and our tradition by arriving on time. Late arrivals can be disruptive, and we would truly appreciate your <strong style={{ fontStyle: 'normal', fontWeight: 700, color: 'rgba(30,52,72,0.75)' }}>punctuality.</strong>
-                              </p>
+  <strong style={{ fontStyle: 'italic', fontWeight: 700, color: 'rgba(30,52,72,0.75)' }}>
+    Kindly honour the couple and our tradition by arriving on time. Late arrivals can be disruptive, and we would truly appreciate your punctuality.
+  </strong>
+</p>
                             )}
                           </div>
                         ) : (

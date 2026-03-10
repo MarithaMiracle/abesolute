@@ -66,16 +66,6 @@ export default function HomePage() {
           <div className="text-center mt-6 sm:mt-10">
             <p className="serif-font text-base sm:text-2xl md:text-base text-cream/90 tracking-[0.2em] sm:tracking-[0.25em]">#ABEsoluteLove</p>
           </div>
-
-          {/* RSVP Button */}
-          <div className="mt-8 sm:mt-12 md:mt-24 fade-up fade-up-delay-2">
-            <Link
-              href="/rsvp"
-              className="inline-block bg-navy-true text-white font-sans font-semibold px-8 sm:px-10 md:px-14 py-3 sm:py-4 rounded-full text-sm sm:text-base tracking-wider hover:bg-white hover:text-navy-true transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              RSVP Now
-            </Link>
-          </div>
         </div>
 
         <div className="relative w-screen left-1/2 -translate-x-1/2">
@@ -168,15 +158,6 @@ export default function HomePage() {
             </div>
 
           </div>
-
-          <div className="text-center mt-12 sm:mt-16">
-            <Link
-              href="/rsvp"
-              className="neon-btn inline-block bg-navy-true text-cream font-sans font-semibold px-8 sm:px-12 py-3 sm:py-4 rounded-full text-sm sm:text-base tracking-wider whitespace-nowrap hover:bg-blue-pale hover:text-navy-true transition-colors"
-            >
-              RSVP Now
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -208,20 +189,72 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {/* Gallery — 2 cols on mobile, 4 on md+ */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-            {['/images/Image line 1.webp', '/images/Image line 2.webp', '/images/Image line 3.webp', '/images/Image line 4.webp'].map((src, i) => (
-              <div key={i} className="aspect-[4/5] relative overflow-hidden shadow-lg group">
-                <Image
-                  src={src}
-                  alt={`Gallery ${i + 1}`}
-                  fill
-                  sizes="(max-width: 640px) 45vw, (max-width: 768px) 45vw, 25vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
+          {/* ── MAGAZINE EDITORIAL GALLERY ── */}
+          <style>{`
+            /* Mobile heights — exact values, untouched */
+            .gallery-hero       { height: 260px; }
+            .gallery-row2-item  { height: 120px; }
+            .gallery-bench      { height: 300px; }
+            .gallery-cake       { min-height: 140px; }
+            .gallery-row4-item  { height: 200px; }
+
+            /* Desktop — switch to aspect ratios that mirror mobile proportions */
+            @media (min-width: 768px) {
+              .gallery-hero       { aspect-ratio: 4/3;   height: auto !important; }
+              .gallery-row2-item  { aspect-ratio: 4/5;   height: auto !important; }
+              .gallery-bench      { aspect-ratio: 3/4;   height: auto !important; }
+              .gallery-cake       { aspect-ratio: 4/3;   height: auto !important; min-height: unset !important; flex: 1; }
+              .gallery-row4-item  { aspect-ratio: 3/4;   height: auto !important; }
+            }
+          `}</style>
+          <div>
+            {/* Row 1: Full-width hero */}
+            <div className="gallery-hero relative w-full overflow-hidden shadow-xl mb-3 sm:mb-4 group">
+              <Image src="/images/5433A802-9D9B-493E-BFB7-5C96E35AB446.webp" alt="Couple walking" fill sizes="100vw" quality={100} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: 'center 70%' }} />
+            </div>
+
+            {/* Row 2: 3 equal columns */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-3 sm:mb-4">
+              <div className="gallery-row2-item relative overflow-hidden shadow-md group">
+                <Image src="/images/IMG_0634.webp" alt="Proposal setup" fill sizes="(max-width: 768px) 33vw, (max-width: 1280px) 33vw, 600px" quality={100} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: 'center center' }} />
               </div>
-            ))}
+              <div className="gallery-row2-item relative overflow-hidden shadow-md group">
+                <Image src="/images/IMG_0633.webp" alt="Picnic laughing" fill sizes="(max-width: 768px) 33vw, (max-width: 1280px) 33vw, 600px" quality={100} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: 'center center' }} />
+              </div>
+              <div className="gallery-row2-item relative overflow-hidden shadow-md group">
+                <Image src="/images/IMG_0621.webp" alt="Picnic reading" fill sizes="(max-width: 768px) 33vw, (max-width: 1280px) 33vw, 600px" quality={100} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: 'center center' }} />
+              </div>
+            </div>
+
+            {/* Row 3: Left tall portrait + right two stacked */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
+              <div className="gallery-bench relative overflow-hidden shadow-md group">
+                <Image src="/images/hkuxlxi35zi0bvr1rrxi.webp" alt="Bench portrait" fill sizes="(max-width: 768px) 50vw, (max-width: 1280px) 50vw, 800px" quality={100} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: 'center 15%' }} />
+              </div>
+              <div className="flex flex-col gap-3 sm:gap-4">
+                <div className="gallery-cake relative overflow-hidden shadow-md group">
+                  <Image src="/images/IMG_2106.webp" alt="Cake cutting" fill sizes="(max-width: 768px) 50vw, (max-width: 1280px) 50vw, 800px" quality={100} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: 'center 20%' }} />
+                </div>
+                <div className="gallery-cake relative overflow-hidden shadow-md group">
+                  <Image src="/images/msc1xw9ldk7m5ihccer7.webp" alt="With the cake" fill sizes="(max-width: 768px) 50vw, (max-width: 1280px) 50vw, 800px" quality={100} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: 'center 10%' }} />
+                </div>
+              </div>
+            </div>
+
+            {/* Row 4: 3 tall portraits */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-4">
+              <div className="gallery-row4-item relative overflow-hidden shadow-md group">
+                <Image src="/images/skojadputzasppo0ubmv.webp" alt="Lisbon rooftop" fill sizes="(max-width: 768px) 33vw, (max-width: 1280px) 33vw, 600px" quality={100} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: 'center 20%' }} />
+              </div>
+              <div className="gallery-row4-item relative overflow-hidden shadow-md group">
+                <Image src="/images/n4dt9k7a4n1lqh921kaz.webp" alt="Wedding rings" fill sizes="(max-width: 768px) 33vw, (max-width: 1280px) 33vw, 600px" quality={100} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: 'center 25%' }} />
+              </div>
+              <div className="gallery-row4-item relative overflow-hidden shadow-md group">
+                <Image src="/images/IMG_1670.webp" alt="Studio portrait" fill sizes="(max-width: 768px) 33vw, (max-width: 1280px) 33vw, 600px" quality={100} className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: 'center 10%' }} />
+              </div>
+            </div>
           </div>
+
         </div>
       </section>
 

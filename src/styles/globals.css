@@ -153,7 +153,12 @@ body {
 }
 
 .belt {
-    animation: belt 24s linear infinite;
+    animation: belt 30s linear infinite;
+    width: max-content;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
 }
 
 .justify-text {

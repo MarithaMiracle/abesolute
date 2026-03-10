@@ -5,38 +5,40 @@ import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
 
 const bridesmaids = [
-  { name: 'Sewa', img: '/images/Sewa.webp' },
-  { name: 'Ore', img: '/images/Ore.webp' },
-  { name: 'Fiyin', img: '/images/Fiyin.webp' },
-  { name: 'Emilia', img: '/images/Emilia.webp' },
   { name: 'Michelle', img: '/images/Michelle.webp' },
-  { name: 'Gift', img: '/images/Gift.webp' },
-  { name: 'Moji', img: '/images/Moji.webp' },
-  { name: 'Ayodele', img: '/images/Ayodele.webp' },
-  { name: 'Oyin', img: '/images/Oyin.webp' },
-  { name: 'Tilewa', img: '/images/Tilewa.webp' },
-  { name: 'Abbey', img: '/images/Abbey.webp' },
-  { name: 'Uzo', img: '/images/Uzo.webp' },
+  { name: 'Fiyin', img: '/images/Fiyin.webp' },
+  { name: 'Jess', img: '/images/Jess.webp', pos: 'center 25%' },
   { name: 'Dolapo', img: '/images/Dolapo.webp' },
   { name: 'Amandy', img: '/images/Amandy.webp' },
-  { name: 'Jess', img: '/images/Jess.webp', pos: 'center 25%' },
+  { name: 'Emilia', img: '/images/Emilia.webp' },
+  { name: 'Tilewa', img: '/images/Tilewa.webp' },
+  { name: 'Princess', img: '/images/Princess.webp' },
+  { name: 'Abbey', img: '/images/Abbey.webp' },
+  { name: 'Gift', img: '/images/Gift.webp' },
+  { name: 'Oyin', img: '/images/Oyin.webp' },
+  { name: 'Ayodele', img: '/images/Ayodele.webp' },
+  { name: 'Moji', img: '/images/Moji.webp' },
+  { name: 'Uzo', img: '/images/Uzo.webp' },
+  { name: 'Sewa', img: '/images/Sewa.webp' },
+  { name: 'Ore', img: '/images/Ore.webp' },
 ]
 
 const groomsmen = [
-  { name: 'Wasiu', img: '/images/Wasiu.webp', pos: 'center 40%' },
-  { name: 'Ricky', img: 'images/Ricky.webp' },
-  { name: 'Abi', img: '/images/Abi.webp' },
+  { name: 'Bosoye', img: '/images/Bosoye.webp' },
   { name: 'Deji', img: '/images/Deji.webp', pos: 'center 45%' },
-  { name: 'Chigozie', img: '/images/Chigozie.webp', pos: 'center 60%' },
+  { name: 'Timi', img: '/images/Timi.webp' },
+  { name: 'Shirey', img: '/images/Shirey.webp' },
+  { name: 'Babalola Afeez', img: '/images/Babalola Afeez.webp' },
   { name: 'Dapo', img: '/images/Dapo.webp' },
   { name: 'Femi', img: '/images/Femi.webp' },
-  { name: 'Bosoye', img: '/images/Bosoye.webp' },
-  { name: 'Shirey', img: '/images/Shirey.webp' },
+  { name: 'Ricky', img: 'images/Ricky.webp' },
   { name: 'Feranmi', img: '/images/Feranmi.webp' },
-  { name: 'Timi', img: '/images/Timi.webp' },
   { name: 'Mayowa', img: '/images/Mayowa.webp' },
+  { name: 'Chigozie', img: '/images/Chigozie.webp', pos: 'center 60%' },
+  { name: 'Demola', img: '/images/Demola.webp' },
+  { name: 'Wasiu', img: '/images/Wasiu.webp', pos: 'center 40%' },
+  { name: 'Abi', img: '/images/Abi.webp' },
   { name: 'Musa', img: '/images/Musa.webp' },
-  { name: 'Babalola Afeez', img: '/images/Babalola Afeez.webp' },
 ]
 
 function getStyle(name: string) {
@@ -134,7 +136,6 @@ const Avatar = React.memo(function Avatar({ name, img, pos }: { name: string; im
             backgroundSize: 'cover',
             backgroundPosition: pos ?? 'center top',
             backgroundColor: '#3A6186',
-            filter: 'sepia(18%) saturate(88%) brightness(0.97) contrast(0.96)',
           }} />
           <div style={{
             position: 'absolute',
