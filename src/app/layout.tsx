@@ -8,6 +8,9 @@ export const metadata: Metadata = {
     index: false,
     follow: false,
   },
+  verification: {
+    google: 'J0Hjh-bcI3AlJMzNGkzl88279lPpk3Djdah-LHdJtI8',
+  },
 }
 
 export default function RootLayout({
