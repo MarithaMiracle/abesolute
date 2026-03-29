@@ -11,13 +11,13 @@ export function middleware(request: NextRequest) {
 
   // Allow Next.js internals and static files through
   if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/favicon') ||
-    pathname.startsWith('/images') ||
-    pathname.match(/\.(webp|png|jpg|jpeg|svg|ico|woff|woff2|ttf)$/)
-  ) {
-    return NextResponse.next()
-  }
+  pathname.startsWith('/enter') ||
+  pathname.startsWith('/api/unlock') ||
+  pathname.startsWith('/checkin') ||
+  pathname.startsWith('/admin')
+) {
+  return NextResponse.next()
+}
 
   // Check for the unlocked cookie
   const unlocked = request.cookies.get('wedding_unlocked')?.value
