@@ -28,7 +28,7 @@ const groomsmen = [
   { name: 'Deji', img: '/images/Deji.webp', pos: 'center 45%' },
   { name: 'Timi', img: '/images/Timi.webp' },
   { name: 'Shirey', img: '/images/Shirey.webp' },
-  { name: 'Babalola Afeez', img: '/images/Babalola Afeez.webp' },
+  { name: 'Afeez', img: '/images/Babalola Afeez.webp' },
   { name: 'Dapo', img: '/images/Dapo.webp' },
   { name: 'Femi', img: '/images/Femi.webp' },
   { name: 'Ricky', img: 'images/Ricky.webp' },

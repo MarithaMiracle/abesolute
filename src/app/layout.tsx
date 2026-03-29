@@ -4,6 +4,10 @@ import '../styles/globals.css'
 export const metadata: Metadata = {
   title: 'Feyisayo & Temitayo | 04.07.2026',
   description: 'Join us in celebrating our traditional wedding — Feyisayo & Temitayo | #ABEsoluteLove',
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 export default function RootLayout({
