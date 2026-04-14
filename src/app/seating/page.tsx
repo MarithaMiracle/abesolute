@@ -44,14 +44,14 @@ export default function SeatingPage() {
         <div
           className="relative h-52 sm:h-72 md:h-96 overflow-hidden"
           style={{
-            backgroundImage: "url('/images/Homepage (hero section).webp')",
+            backgroundImage: "url('/images/IMG_2106.webp')",
             backgroundSize: 'cover',
             backgroundPosition: 'center 30%',
             backgroundColor: '#2D4F6B',
           }}
         >
           <div className="absolute inset-0" style={{ background: 'rgba(30,52,72,0.55)' }} />
-          <div className="relative z-10 h-full flex flex-col justify-end pb-8 sm:pb-12 px-6 sm:px-12 md:px-20">
+          <div className="relative z-10 h-full flex flex-col justify-end items-end text-right pb-8 sm:pb-12 px-6 sm:px-12 md:px-20">
             <h1 className="script-font text-4xl sm:text-6xl font-semibold text-cream leading-tight max-w-md">
               Find Your <br />
               <span className="script-font text-4xl sm:text-6xl">Seat</span>
@@ -67,7 +67,7 @@ export default function SeatingPage() {
       <section
         className="relative py-12 sm:py-20 px-4 sm:px-6"
         style={{
-          backgroundImage: "linear-gradient(rgba(232,220,200,0.97), rgba(232,220,200,0.97)), url('/images/Pattern background.webp')",
+          backgroundImage: "linear-gradient(rgba(232,220,200,0.7), rgba(232,220,200,0.7)), url('/images/Pattern background.webp')",
           backgroundRepeat: 'no-repeat, repeat',
           backgroundSize: 'auto, 480px auto',
           backgroundColor: '#E8DCC8',
