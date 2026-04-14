@@ -5,7 +5,7 @@ import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
 
 const bridesmaids = [
-  { name: 'Michelle', img: '/images/Michelle.webp' },
+  { name: 'Michelle', img: '/images/Michelle.jpeg' },
   { name: 'Fiyin', img: '/images/Fiyin.webp' },
   { name: 'Jess', img: '/images/Jess.webp', pos: 'center 25%' },
   { name: 'Dolapo', img: '/images/Dolapo.webp' },

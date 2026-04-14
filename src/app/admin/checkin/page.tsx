@@ -14,8 +14,24 @@ type Guest = {
 
 const ADMIN_PIN = '9999'
 
+const EyeIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>
+)
+
+const EyeOffIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+    <line x1="1" y1="1" x2="23" y2="23"/>
+  </svg>
+)
+
 export default function AdminCheckinPage() {
   const [pin, setPin] = useState('')
+  const [showPin, setShowPin] = useState(false)
   const [pinError, setPinError] = useState(false)
   const [authenticated, setAuthenticated] = useState(false)
   const [guests, setGuests] = useState<Guest[]>([])
@@ -46,7 +62,6 @@ export default function AdminCheckinPage() {
 
     fetchGuests()
 
-    // Real-time updates
     const channel = supabase
       .channel('seating-changes')
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'seating' }, payload => {
@@ -66,14 +81,24 @@ export default function AdminCheckinPage() {
             <p className="text-cream/50 text-sm font-sans mt-1">Enter admin PIN to view dashboard</p>
           </div>
           <form onSubmit={handlePinSubmit} className="flex flex-col gap-4">
-            <input
-              type="password"
-              value={pin}
-              onChange={e => { setPin(e.target.value); setPinError(false) }}
-              placeholder="Enter PIN"
-              className="w-full rounded-xl px-4 py-3 text-sm font-sans text-navy-dark placeholder-black/40 focus:outline-none transition-all text-center tracking-widest"
-              style={{ backgroundColor: 'rgba(232,220,200,0.9)' }}
-            />
+            <div className="relative">
+              <input
+                type={showPin ? 'text' : 'password'}
+                value={pin}
+                onChange={e => { setPin(e.target.value); setPinError(false) }}
+                placeholder="Enter PIN"
+                className="w-full rounded-xl px-4 py-3 pr-11 text-sm font-sans text-navy-dark placeholder-black/40 focus:outline-none transition-all text-center tracking-widest"
+                style={{ backgroundColor: 'rgba(232,220,200,0.9)' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPin(p => !p)}
+                tabIndex={-1}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-dark/50 hover:text-navy-dark transition-colors"
+              >
+                {showPin ? <EyeOffIcon /> : <EyeIcon />}
+              </button>
+            </div>
             {pinError && <p className="text-red-300 text-xs text-center font-sans">Incorrect PIN</p>}
             <button
               type="submit"
@@ -100,26 +125,25 @@ export default function AdminCheckinPage() {
     <main className="min-h-screen px-4 py-10" style={{ backgroundColor: '#1E3448' }}>
       <div className="max-w-2xl mx-auto">
 
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="script-font text-cream" style={{ fontSize: 'clamp(2rem, 8vw, 3rem)' }}>Check-In Dashboard</h1>
           <p className="text-cream/50 text-sm font-sans mt-1">Live attendance overview</p>
         </div>
 
-        {/* Stats */}
+        {/* Stat cards — Option C */}
         {!loading && (
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: 'rgba(184,204,220,0.12)', border: '1px solid rgba(255,255,255,0.1)' }}>
-              <p className="text-cream text-2xl font-bold font-sans">{guests.length}</p>
-              <p className="text-cream/50 text-xs font-sans mt-0.5">Total Guests</p>
+            <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: '#2D4F6B', border: '1px solid rgba(184,204,220,0.35)' }}>
+              <p className="text-white text-2xl font-bold font-sans">{guests.length}</p>
+              <p className="text-blue-pale text-xs font-sans mt-0.5">Total Guests</p>
             </div>
-            <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: 'rgba(100,180,100,0.15)', border: '1px solid rgba(100,180,100,0.3)' }}>
-              <p className="text-green-400 text-2xl font-bold font-sans">{checkedIn.length}</p>
-              <p className="text-cream/50 text-xs font-sans mt-0.5">Checked In</p>
+            <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: '#2D4F6B', border: '1px solid rgba(110,231,183,0.45)' }}>
+              <p className="text-2xl font-bold font-sans" style={{ color: '#6ee7b7' }}>{checkedIn.length}</p>
+              <p className="text-xs font-sans mt-0.5" style={{ color: '#6ee7b7', opacity: 0.8 }}>Checked In</p>
             </div>
-            <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: 'rgba(184,204,220,0.12)', border: '1px solid rgba(255,255,255,0.1)' }}>
-              <p className="text-cream/70 text-2xl font-bold font-sans">{pending.length}</p>
-              <p className="text-cream/50 text-xs font-sans mt-0.5">Pending</p>
+            <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: '#2D4F6B', border: '1px solid rgba(184,204,220,0.35)' }}>
+              <p className="text-white text-2xl font-bold font-sans">{pending.length}</p>
+              <p className="text-blue-pale text-xs font-sans mt-0.5">Pending</p>
             </div>
           </div>
         )}
@@ -151,7 +175,7 @@ export default function AdminCheckinPage() {
           />
         </div>
 
-        {/* Guest list */}
+        {/* Guest list — Option C */}
         {loading ? (
           <p className="text-cream/50 text-center font-sans text-sm py-10">Loading guests...</p>
         ) : (
@@ -159,21 +183,21 @@ export default function AdminCheckinPage() {
             {filtered.map(guest => (
               <div
                 key={guest.id}
-                className="rounded-xl px-4 py-3 flex items-center justify-between"
+                className="rounded-xl px-4 py-3 flex items-center justify-between transition-all"
                 style={{
-                  backgroundColor: guest.checked_in ? 'rgba(100,180,100,0.12)' : 'rgba(184,204,220,0.08)',
-                  border: `1px solid ${guest.checked_in ? 'rgba(100,180,100,0.25)' : 'rgba(255,255,255,0.07)'}`,
+                  backgroundColor: guest.checked_in ? '#2D4F6B' : '#1E3448',
+                  border: `1px solid ${guest.checked_in ? 'rgba(110,231,183,0.4)' : 'rgba(184,204,220,0.2)'}`,
                 }}
               >
                 <div>
-                  <p className="font-sans text-cream text-sm font-medium">{guest.full_name}</p>
-                  <p className="font-sans text-cream/50 text-xs">{guest.table_number} · {guest.seat}</p>
+                  <p className="font-sans text-white text-sm font-bold">{guest.full_name}</p>
+                  <p className="font-sans text-blue-pale text-xs">{guest.table_number} · {guest.seat}</p>
                 </div>
                 <div className="text-right">
                   {guest.checked_in ? (
-                    <span className="text-green-400 text-xs font-sans">✓ Checked in</span>
+                    <span className="text-xs font-sans font-semibold" style={{ color: '#6ee7b7' }}>✓ Checked in</span>
                   ) : (
-                    <span className="text-cream/30 text-xs font-sans">Pending</span>
+                    <span className="text-cream/40 text-xs font-sans">Pending</span>
                   )}
                 </div>
               </div>

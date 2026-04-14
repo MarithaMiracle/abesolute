@@ -21,12 +21,13 @@ export default function Navbar() {
   }, [pathname])
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'RSVP', path: '/rsvp' },
-    { name: 'Ceremony', path: '/ceremony' },
-    { name: 'Wedding Party', path: '/wedding-party' },
-    { name: 'Gifting', path: '/gifting' },
-  ]
+  { name: 'Home', path: '/' },
+  { name: 'RSVP', path: '/rsvp' },
+  { name: 'Ceremony', path: '/ceremony' },
+  { name: 'Wedding Party', path: '/wedding-party' },
+  { name: 'Gifting', path: '/gifting' },
+  { name: 'Seating', path: '/seating' },
+]
 
   return (
     <nav className="fixed top-6 w-full z-50">
