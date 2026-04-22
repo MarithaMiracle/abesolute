@@ -74,6 +74,9 @@ export default function SeatingPage() {
         }}
       >
         <div className="max-w-lg mx-auto">
+          <p className="serif-font text-navy-dark text-base sm:text-xl font-black text-center mb-6 tracking-wide uppercase px-2">
+            SEATING INFORMATION WILL BE AVAILABLE ON THE DAY OF THE EVENT
+          </p>
 
           {/* Search card */}
           <div className="rounded-2xl p-6 sm:p-10 shadow-xl mb-8" style={{ backgroundColor: '#2D4F6B' }}>

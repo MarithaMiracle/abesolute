@@ -1,9 +1,9 @@
 {
   "pages": {
-    "/page": [
+    "/enter/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/enter/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -16,25 +16,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/template.js"
     ],
-    "/wedding-party/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/wedding-party/page.js"
+      "static/chunks/app/page.js"
     ],
     "/seating/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/seating/page.js"
-    ],
-    "/gifting/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/gifting/page.js"
-    ],
-    "/ceremony/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/ceremony/page.js"
     ]
   }
 }
