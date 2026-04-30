@@ -255,7 +255,7 @@ export default function RSVPPage() {
                     )}
 
                     {step === 2 && (
-                      <form onSubmit={(e) => { e.preventDefault(); setStep(5) }} className="space-y-6 pb-20 sm:pb-28">
+                      <form onSubmit={(e) => { e.preventDefault(); setStep(3) }} className="space-y-6 pb-20 sm:pb-28">
                         <h3 className="serif-font text-3xl sm:text-5xl font-semibold text-navy-true mb-6 sm:mb-20">Will you be attending our wedding?</h3>
                         <div className="space-y-3">
                           <label className="flex gap-3">
@@ -274,12 +274,49 @@ export default function RSVPPage() {
                       </form>
                     )}
 
+                    {step === 3 && (
+                      <div className="space-y-6 pb-20 sm:pb-28">
+                        <h3 className="serif-font text-3xl sm:text-5xl font-semibold text-navy-true mb-6 sm:mb-10">Are you RSVP'ing for a +1?</h3>
+                        <div className="flex gap-4">
+                          <button className="px-6 py-3 rounded-xl hover:bg-[#98ABC0] transition-all" style={{ backgroundColor: moreGuests ? '#05233D' : 'rgba(130,157,182,0.4)', color: '#fff' }} onClick={() => setMoreGuests(true)}>YES</button>
+                          <button className="px-6 py-3 rounded-xl hover:bg-[#98ABC0] transition-all" style={{ backgroundColor: !moreGuests ? '#05233D' : 'rgba(130,157,182,0.4)', color: '#fff' }} onClick={() => setMoreGuests(false)}>NO</button>
+                        </div>
+                        <div className="flex justify-between mt-6 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
+                          <button type="button" onClick={() => setStep(2)} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
+                          <button type="button" onClick={() => setStep(moreGuests ? 4 : 5)} className="flex items-center gap-2 bg-navy-true text-white font-sans text-xs sm:text-lg px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:bg-blue-muted/80 transition-all">Next <span className="text-sm sm:text-lg">»</span></button>
+                        </div>
+                      </div>
+                    )}
+
+                    {step === 4 && (
+                      <form onSubmit={(e) => { e.preventDefault(); setStep(5) }} className="space-y-6 pb-20 sm:pb-28">
+                        <div>
+                          <h3 className="serif-font text-xl sm:text-5xl font-semibold text-navy-true mb-4 sm:mb-10">Please provide your +1 details</h3>
+                          <p className="text-black/50 text-sm font-sans mb-4">Enter the full name of your additional guest</p>
+                          <div className="space-y-3">
+                            <input
+                              type="text"
+                              value={guestList[0]}
+                              onChange={e => updateGuest(0, e.target.value)}
+                              placeholder="Guest full name"
+                              className="w-full bg-white border border-navy/50 text-black rounded-xl px-4 py-3 text-sm font-sans focus:outline-none focus:border-white/50 transition-all"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="flex justify-between mt-6 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
+                          <button type="button" onClick={() => setStep(3)} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
+                          <button type="submit" className="flex items-center gap-2 bg-navy-true text-white font-sans text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:bg-blue-muted/80 transition-all">Next <span className="text-sm sm:text-lg">»</span></button>
+                        </div>
+                      </form>
+                    )}
+
                     {step === 5 && (
                       <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-6 sm:pb-28">
                         <h3 className="serif-font text-xl sm:text-5xl font-semibold text-navy-true mb-2">Kindly leave a message for the couple</h3>
                         <textarea name="message" value={form.message} onChange={handleChange} rows={3} placeholder="Type your message here" className="w-full bg-white border border-navy/50 text-black placeholder-black/50 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-sm font-sans focus:outline-none focus:border-white/50 focus:bg-white/25 transition-all resize-none" />
                         <div className="flex justify-between mt-4 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
-                          <button type="button" onClick={() => setStep(2)} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
+                          <button type="button" onClick={() => setStep(moreGuests ? 4 : 3)} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
                           <button type="submit" className="bg-navy-true text-white font-sans font-medium text-sm sm:text-lg px-5 sm:px-8 py-2 sm:py-2.5 rounded-xl hover:bg-cream/90 hover:text-navy-true transition-all shadow-md">Submit</button>
                         </div>
                       </form>
