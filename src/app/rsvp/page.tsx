@@ -166,7 +166,7 @@ export default function RSVPPage() {
                     )}
 
                     {step === 1 && (
-                      <form onSubmit={(e) => { e.preventDefault(); setStep(2) }} className="pb-14 sm:pb-28 w-full">
+                      <form onSubmit={(e) => { e.preventDefault(); if (form.firstName.trim() && form.surname.trim() && form.email.trim()) setStep(2); }} className="pb-14 sm:pb-28 w-full">
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-8 items-start">
                           <div className="text-left my-auto md:col-span-4 md:pr-6 max-w-xs hidden md:block">
                             <h3 className="serif-font my-auto max-w-xs text-5xl font-semibold text-navy-dark mb-2">
@@ -234,7 +234,7 @@ export default function RSVPPage() {
                         </div>
                         <div className="flex justify-between mt-6 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
                           <button type="button" onClick={() => setStep(0)} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
-                          <button type="submit" className="flex items-center gap-2 bg-navy-true text-white font-sans text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:bg-blue-muted/80 transition-all">
+                          <button type="submit" disabled={!form.firstName.trim() || !form.surname.trim() || !form.email.trim()} className={`flex items-center gap-2 font-sans text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl transition-all ${!form.firstName.trim() || !form.surname.trim() || !form.email.trim() ? 'bg-gray-400 cursor-not-allowed' : 'bg-navy-true hover:bg-blue-muted/80'} text-white`}>
                             Next <span className="text-sm sm:text-lg">»</span>
                           </button>
                         </div>
@@ -242,21 +242,23 @@ export default function RSVPPage() {
                     )}
 
                     {step === 2 && (
-                      <form onSubmit={(e) => { e.preventDefault(); setStep(3) }} className="space-y-6 pb-20 sm:pb-28">
+                      <form onSubmit={(e) => { e.preventDefault(); if (form.attendance) setStep(3); }} className="space-y-6 pb-20 sm:pb-28">
                         <h3 className="serif-font text-3xl sm:text-5xl font-semibold text-navy-true mb-6 sm:mb-20">Will you be attending our wedding?</h3>
                         <div className="space-y-3">
                           <label className="flex gap-3">
-                            <input type="checkbox" name="attendance" value="yes" checked={form.attendance === 'yes'} onChange={handleChange} className="accent-cream transform scale-150" />
+                            <input type="radio" name="attendance" value="yes" checked={form.attendance === 'yes'} onChange={handleChange} className="accent-cream transform scale-150" />
                             <span className="text-navy-true font-sans text-lg sm:text-2xl">Yes, joyfully attending</span>
                           </label>
                           <label className="flex items-center gap-3">
-                            <input type="checkbox" name="attendance" value="no" checked={form.attendance === 'no'} onChange={handleChange} className="accent-cream transform scale-150" />
+                            <input type="radio" name="attendance" value="no" checked={form.attendance === 'no'} onChange={handleChange} className="accent-cream transform scale-150" />
                             <span className="text-navy-true font-sans text-lg sm:text-2xl">No, sorry unable to attend</span>
                           </label>
                         </div>
                         <div className="flex justify-between mt-6 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
                           <button type="button" onClick={() => setStep(1)} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
-                          <button type="submit" className="flex items-center gap-2 bg-navy-true text-white font-sans text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:bg-blue-muted/80 transition-all">Next <span className="text-sm sm:text-lg">»</span></button>
+                          <button type="submit" disabled={!form.attendance} className={`flex items-center gap-2 font-sans text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl transition-all ${!form.attendance ? 'bg-gray-400 cursor-not-allowed' : 'bg-navy-true hover:bg-blue-muted/80'} text-white`}>
+                            Next <span className="text-sm sm:text-lg">»</span>
+                          </button>
                         </div>
                       </form>
                     )}
