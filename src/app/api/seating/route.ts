@@ -58,6 +58,7 @@ export async function GET(req: NextRequest) {
       guestName: findColumn(headers, ['guest name', 'name', 'full name']),
       attendance: findColumn(headers, ['attendance', 'rsvp', 'attending']),
       tableNumber: findColumn(headers, ['table no.', 'table no', 'table number', 'table']),
+      seatNumber: findColumn(headers, ['seat', 'seat no.', 'seat no', 'seat number']),
     }
 
     const guests = rows.slice(1)
@@ -67,6 +68,7 @@ export async function GET(req: NextRequest) {
           id: String(index + 2),
           name,
           tableNumber: cell(row, columns.tableNumber),
+          seatNumber: cell(row, columns.seatNumber),
           attending: isAttending(cell(row, columns.attendance)),
         }
       })

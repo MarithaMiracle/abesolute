@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     const allowedScans = body['Attendance'] === 'yes' ? Number(body['Guest Count'] || '1') : 0
     const qrUrlBase = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.abesolutelovestory.com'
     const qrUrl = qrToken ? `${qrUrlBase}/checkin?token=${encodeURIComponent(qrToken)}` : ''
-    const qrImageUrl = qrToken ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}` : ''
+    const qrImageUrl = qrToken ? `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrUrl)}` : ''
 
     const newRow = [
       body['First Name'],
@@ -122,9 +122,9 @@ export async function POST(req: NextRequest) {
               ${body['Attendance'] === 'yes' ? `
                 <p>Please present your barcode for entry:</p>
                 <div style="margin:24px 0; text-align:center;">
-                  <img src="${qrImageUrl}" alt="QR Code" width="300" height="300" style="border:1px solid #ddd; border-radius:12px; display:block; margin:0 auto;" />
+                  <img src="${qrImageUrl}" alt="QR Code" width="160" height="160" style="border:1px solid #ddd; border-radius:10px; display:block; margin:0 auto;" />
                 </div>
-                <p style="font-weight:600; margin:12px 0 0;">${body['First Name']} ${body['Surname']} - Attending${body['Table no.'] ? `<br /><span style="font-size:14px; color:#4b5563;">Table ${body['Table no.']}</span>` : ''}</p>
+                <p style="font-weight:600; margin:12px 0 0;">${body['First Name']} ${body['Surname']} - Attending${body['Table no.'] || body['Seat'] ? `<br /><span style="font-size:14px; color:#4b5563;">${[body['Table no.'] ? `Table ${body['Table no.']}` : '', body['Seat'] ? `Seat ${body['Seat']}` : ''].filter(Boolean).join(' &nbsp;|&nbsp; ')}</span>` : ''}</p>
                 <p style="margin:8px 0 0; font-size:14px; color:#4b5563;"><strong>Date:</strong> 4th July 2026<br /><strong>Venue:</strong> Grand Venue, Oldham OL9 6AZ<br /><strong>Guest Arrival Time:</strong> 12:00 PM</p>
                 <p style="margin:20px 0 0; font-size:13px; color:#4b5563;">Kindly note this is a strictly invitation-only event. Entry is reserved for guests on the confirmed guest list, and we kindly ask that no additional plus-ones or children not included in the invitation attend.</p>
                 <p style="margin:0;">We can’t wait to celebrate this special day with you!</p>

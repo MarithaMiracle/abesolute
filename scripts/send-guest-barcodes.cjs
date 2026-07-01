@@ -78,10 +78,14 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;')
 }
 
-function buildEmailHtml({ firstName, surname, tableNumber, qrImageUrl, qrUrl }) {
+function buildEmailHtml({ firstName, surname, tableNumber, seatNumber, qrImageUrl, qrUrl }) {
   const fullName = `${firstName} ${surname}`.trim() || 'Guest'
-  const tableLine = tableNumber
-    ? `<br /><span style="font-size:14px; color:#4b5563;">Table ${escapeHtml(tableNumber)}</span>`
+  const seatingDetails = [
+    tableNumber ? `Table ${escapeHtml(tableNumber)}` : '',
+    seatNumber ? `Seat ${escapeHtml(seatNumber)}` : '',
+  ].filter(Boolean).join(' &nbsp;|&nbsp; ')
+  const seatingLine = seatingDetails
+    ? `<br /><span style="font-size:14px; color:#4b5563;">${seatingDetails}</span>`
     : ''
 
   return `
@@ -89,9 +93,9 @@ function buildEmailHtml({ firstName, surname, tableNumber, qrImageUrl, qrUrl }) 
       <p>Dear Guest,</p>
       <p>Please present your barcode for entry:</p>
       <div style="margin:24px 0; text-align:center;">
-        <img src="${escapeHtml(qrImageUrl)}" alt="QR Code" width="300" height="300" style="border:1px solid #ddd; border-radius:12px; display:block; margin:0 auto;" />
+        <img src="${escapeHtml(qrImageUrl)}" alt="QR Code" width="160" height="160" style="border:1px solid #ddd; border-radius:10px; display:block; margin:0 auto;" />
       </div>
-      <p style="font-weight:600; margin:12px 0 0;">${escapeHtml(fullName)} - Attending${tableLine}</p>
+      <p style="font-weight:600; margin:12px 0 0;">${escapeHtml(fullName)} - Attending${seatingLine}</p>
       <p style="margin:8px 0 0; font-size:14px; color:#4b5563;"><strong>Date:</strong> 4th July 2026<br /><strong>Venue:</strong> Grand Venue, Oldham OL9 6AZ<br /><strong>Guest Arrival Time:</strong> 12:00 PM</p>
       <p style="margin:20px 0 0; font-size:13px; color:#4b5563;">Kindly note this is a strictly invitation-only event. Entry is reserved for guests on the confirmed guest list, and we kindly ask that no additional plus-ones or children not included in the invitation attend.</p>
       <p style="margin:0;">We can't wait to celebrate this special day with you!</p>
@@ -188,6 +192,7 @@ async function main() {
     rsvp: findColumn(headers, ['rsvp']),
     'guest count': findColumn(headers, ['guest count', 'guests', 'number of guests', 'number attending']),
     'other guests': findColumn(headers, ['other guests', 'additional guests', 'plus ones']),
+    'seat number': findColumn(headers, ['seat', 'seat no.', 'seat no', 'seat number']),
     'qr token': findColumn(headers, ['qr token']),
     'allowed scans': findColumn(headers, ['allowed scans']),
     'used scans': findColumn(headers, ['used scans']),
@@ -280,6 +285,7 @@ async function main() {
     const surname = cell(row, columns, 'surname') || (guestName && splitName.length > 1 ? splitName.at(-1) : '')
     const guestEmailAddress = cell(row, columns, 'email')
     const tableNumber = cell(row, columns, 'table number')
+    const seatNumber = cell(row, columns, 'seat number')
     const guestCountValue = cell(row, columns, 'guest count')
     const otherGuestsValue = cell(row, columns, 'other guests')
     const guestCount = guestCountValue ? Number(guestCountValue) : Number(otherGuestsValue || '0') + 1
@@ -333,7 +339,7 @@ async function main() {
     }
 
     const qrUrl = `${siteUrl}/checkin?token=${encodeURIComponent(qrToken)}`
-    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}`
+    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrUrl)}`
     const to = testTo || guestEmailAddress
 
     console.log(`${dryRun ? 'Would send' : 'Sending'} row ${currentSheetRow}: ${firstName} ${surname} -> ${to}`)
@@ -343,7 +349,7 @@ async function main() {
         from: 'Feyisayo & Temitayo <rsvp@abesolutelovestory.com>',
         to,
         subject: 'Your entry barcode for the wedding',
-        html: buildEmailHtml({ firstName, surname, tableNumber, qrImageUrl, qrUrl }),
+        html: buildEmailHtml({ firstName, surname, tableNumber, seatNumber, qrImageUrl, qrUrl }),
       })
       sent += 1
     }

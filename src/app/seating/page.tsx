@@ -8,6 +8,7 @@ type Guest = {
   id: string
   name: string
   tableNumber: string
+  seatNumber: string
 }
 
 export default function SeatingPage() {
@@ -62,10 +63,10 @@ export default function SeatingPage() {
           <div className="relative z-10 h-full flex flex-col justify-end items-end text-right pb-8 sm:pb-12 px-6 sm:px-12 md:px-20">
             <h1 className="script-font text-4xl sm:text-6xl font-semibold text-cream leading-tight max-w-md">
               Find Your <br />
-              <span className="script-font text-4xl sm:text-6xl">Table</span>
+              <span className="script-font text-4xl sm:text-6xl">Seat</span>
             </h1>
             <p className="text-cream/80 text-sm sm:text-lg mt-2 sm:mt-3 max-w-sm font-sans hidden sm:block">
-              Enter your name below to find your table number for the celebration.
+              Enter your name below to find your table and seat number for the celebration.
             </p>
           </div>
         </div>
@@ -82,7 +83,7 @@ export default function SeatingPage() {
       >
         <div className="max-w-lg mx-auto">
           <p className="serif-font text-navy-dark text-base sm:text-xl font-black text-center mb-6 tracking-wide uppercase px-2">
-            SEARCH YOUR NAME TO FIND YOUR TABLE NUMBER
+            SEARCH YOUR NAME TO FIND YOUR TABLE AND SEAT NUMBER
           </p>
 
           <div className="rounded-2xl p-6 sm:p-10 shadow-xl mb-8" style={{ backgroundColor: '#2D4F6B' }}>
@@ -108,7 +109,7 @@ export default function SeatingPage() {
                 className="px-5 py-3 rounded-xl font-sans font-medium text-sm disabled:opacity-50 transition-all whitespace-nowrap"
                 style={{ backgroundColor: '#B8CDD9', color: '#1E3448' }}
               >
-                {loading ? '...' : 'Find Table'}
+                {loading ? '...' : 'Find Seat'}
               </button>
             </form>
           </div>
@@ -141,9 +142,15 @@ export default function SeatingPage() {
                 <div className="p-6 sm:p-8">
                   <p className="font-sans text-blue-pale text-xs tracking-widest uppercase mb-1">Guest</p>
                   <p className="serif-font text-white text-2xl sm:text-3xl font-bold mb-6">{guest.name}</p>
-                  <div className="rounded-xl p-4 text-center" style={{ backgroundColor: '#1E3448' }}>
-                    <p className="font-sans text-blue-pale text-xs tracking-widest uppercase mb-1">Table</p>
-                    <p className="serif-font text-white text-2xl font-bold">{guest.tableNumber || 'Please ask an usher'}</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded-xl p-4 text-center" style={{ backgroundColor: '#1E3448' }}>
+                      <p className="font-sans text-blue-pale text-xs tracking-widest uppercase mb-1">Table</p>
+                      <p className="serif-font text-white text-2xl font-bold">{guest.tableNumber || 'Ask usher'}</p>
+                    </div>
+                    <div className="rounded-xl p-4 text-center" style={{ backgroundColor: '#1E3448' }}>
+                      <p className="font-sans text-blue-pale text-xs tracking-widest uppercase mb-1">Seat</p>
+                      <p className="serif-font text-white text-2xl font-bold">{guest.seatNumber || 'Ask usher'}</p>
+                    </div>
                   </div>
                   <p className="font-sans text-cream/40 text-xs text-center mt-5 leading-relaxed">
                     Please proceed to your assigned table upon arrival.<br />
