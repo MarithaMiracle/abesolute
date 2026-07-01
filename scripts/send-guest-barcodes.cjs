@@ -78,8 +78,11 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;')
 }
 
-function buildEmailHtml({ firstName, surname, qrImageUrl, qrUrl }) {
+function buildEmailHtml({ firstName, surname, tableNumber, qrImageUrl, qrUrl }) {
   const fullName = `${firstName} ${surname}`.trim() || 'Guest'
+  const tableLine = tableNumber
+    ? `<br /><span style="font-size:14px; color:#4b5563;">Table ${escapeHtml(tableNumber)}</span>`
+    : ''
 
   return `
     <div style="font-family:system-ui, sans-serif; color:#1f2937; line-height:1.6;">
@@ -88,12 +91,12 @@ function buildEmailHtml({ firstName, surname, qrImageUrl, qrUrl }) {
       <div style="margin:24px 0; text-align:center;">
         <img src="${escapeHtml(qrImageUrl)}" alt="QR Code" width="300" height="300" style="border:1px solid #ddd; border-radius:12px; display:block; margin:0 auto;" />
       </div>
-      <p style="font-weight:600; margin:12px 0 0;">${escapeHtml(fullName)} - Attending</p>
+      <p style="font-weight:600; margin:12px 0 0;">${escapeHtml(fullName)} - Attending${tableLine}</p>
       <p style="margin:8px 0 0; font-size:14px; color:#4b5563;"><strong>Date:</strong> 4th July 2026<br /><strong>Venue:</strong> Grand Venue, Oldham OL9 6AZ<br /><strong>Guest Arrival Time:</strong> 12:00 PM</p>
-      <p style="margin:20px 0 0;">Kindly note this is a strictly invitation-only event. Entry is reserved for guests on the confirmed guest list, and we kindly ask that no additional plus-ones or children not included in the invitation attend.</p>
+      <p style="margin:20px 0 0; font-size:13px; color:#4b5563;">Kindly note this is a strictly invitation-only event. Entry is reserved for guests on the confirmed guest list, and we kindly ask that no additional plus-ones or children not included in the invitation attend.</p>
       <p style="margin:0;">We can't wait to celebrate this special day with you!</p>
       <p style="margin:24px 0 0;">Warm regards,<br/>Feyisayo & Temitayo</p>
-      <p style="margin-top:20px; font-size:12px; color:#9ca3af;">If the code image does not appear, please use this link: <a href="${escapeHtml(qrUrl)}">${escapeHtml(qrUrl)}</a></p>
+      <p style="margin-top:20px; font-size:13px; color:#6b7280;">If the code image does not appear, please use this link: <a href="${escapeHtml(qrUrl)}" style="color:#1E3448;">${escapeHtml(qrUrl)}</a></p>
     </div>
   `
 }
@@ -276,6 +279,7 @@ async function main() {
     const firstName = cell(row, columns, 'first name') || splitName.slice(0, -1).join(' ') || guestName
     const surname = cell(row, columns, 'surname') || (guestName && splitName.length > 1 ? splitName.at(-1) : '')
     const guestEmailAddress = cell(row, columns, 'email')
+    const tableNumber = cell(row, columns, 'table number')
     const guestCountValue = cell(row, columns, 'guest count')
     const otherGuestsValue = cell(row, columns, 'other guests')
     const guestCount = guestCountValue ? Number(guestCountValue) : Number(otherGuestsValue || '0') + 1
@@ -339,7 +343,7 @@ async function main() {
         from: 'Feyisayo & Temitayo <rsvp@abesolutelovestory.com>',
         to,
         subject: 'Your entry barcode for the wedding',
-        html: buildEmailHtml({ firstName, surname, qrImageUrl, qrUrl }),
+        html: buildEmailHtml({ firstName, surname, tableNumber, qrImageUrl, qrUrl }),
       })
       sent += 1
     }

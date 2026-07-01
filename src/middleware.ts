@@ -14,7 +14,9 @@ export function middleware(request: NextRequest) {
   pathname.startsWith('/enter') ||
   pathname.startsWith('/api/unlock') ||
   pathname.startsWith('/api/checkin') ||
+  pathname.startsWith('/api/seating') ||
   pathname.startsWith('/checkin') ||
+  pathname.startsWith('/seating') ||
   pathname.startsWith('/admin')
 ) {
   return NextResponse.next()
