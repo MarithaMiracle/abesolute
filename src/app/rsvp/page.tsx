@@ -33,7 +33,7 @@ export default function RSVPPage() {
     const timer = setTimeout(() => {
       setSubmitted(false)
       setStep(0)
-      setForm({ firstName: '', surname: '', email: '', phone: '', attendance: '', message: '' })
+      setForm({ firstName: '', surname: '', email: '', phone: '', attendance: '', guestCount: '1', message: '' })
     }, 4000)
     return () => clearTimeout(timer)
   }

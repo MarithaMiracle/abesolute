@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 type CheckinResult = {
@@ -13,7 +13,7 @@ type CheckinResult = {
   error?: string
 }
 
-export default function CheckinPage() {
+function CheckinPageContent() {
   const searchParams = useSearchParams()
   const [token, setToken] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -117,5 +117,22 @@ export default function CheckinPage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function CheckinPage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen px-4 py-10" style={{ backgroundColor: '#1E3448' }}>
+        <div className="max-w-lg mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="script-font text-cream" style={{ fontSize: 'clamp(2rem, 8vw, 3rem)' }}>Guest Check-In</h1>
+            <p className="text-cream/50 text-sm font-sans mt-1">Loading scanner...</p>
+          </div>
+        </div>
+      </main>
+    }>
+      <CheckinPageContent />
+    </Suspense>
   )
 }

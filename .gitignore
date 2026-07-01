@@ -15,3 +15,4 @@ out/
 .vercel/ . . . . . . . . . . . . 
 coverage/
 .DS_Store
+tsconfig.tsbuildinfo
