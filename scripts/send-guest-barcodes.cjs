@@ -81,9 +81,9 @@ function escapeHtml(value) {
 function buildEmailHtml({ firstName, surname, tableNumber, seatNumber, qrImageUrl, qrUrl }) {
   const fullName = `${firstName} ${surname}`.trim() || 'Guest'
   const seatingDetails = [
-    tableNumber ? `Table ${escapeHtml(tableNumber)}` : '',
-    seatNumber ? `Seat ${escapeHtml(seatNumber)}` : '',
-  ].filter(Boolean).join(' &nbsp;|&nbsp; ')
+    tableNumber ? `Your assigned table number is Table ${escapeHtml(tableNumber)}.` : '',
+    seatNumber ? `Your assigned seat number is Seat ${escapeHtml(seatNumber)}.` : '',
+  ].filter(Boolean).join('<br />')
   const seatingLine = seatingDetails
     ? `<br /><span style="font-size:14px; color:#4b5563;">${seatingDetails}</span>`
     : ''
@@ -190,6 +190,7 @@ async function main() {
     email: findColumn(headers, ['email', 'email address']),
     attendance: findColumn(headers, ['attendance', 'attending']),
     rsvp: findColumn(headers, ['rsvp']),
+    'table number': findColumn(headers, ['table no.', 'table no', 'table number', 'table']),
     'guest count': findColumn(headers, ['guest count', 'guests', 'number of guests', 'number attending']),
     'other guests': findColumn(headers, ['other guests', 'additional guests', 'plus ones']),
     'seat number': findColumn(headers, ['seat', 'seat no.', 'seat no', 'seat number']),
@@ -342,7 +343,8 @@ async function main() {
     const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrUrl)}`
     const to = testTo || guestEmailAddress
 
-    console.log(`${dryRun ? 'Would send' : 'Sending'} row ${currentSheetRow}: ${firstName} ${surname} -> ${to}`)
+    const seatingLog = [tableNumber ? `Table ${tableNumber}` : '', seatNumber ? `Seat ${seatNumber}` : ''].filter(Boolean).join(', ')
+    console.log(`${dryRun ? 'Would send' : 'Sending'} row ${currentSheetRow}: ${firstName} ${surname}${seatingLog ? ` (${seatingLog})` : ''} -> ${to}`)
 
     if (!dryRun) {
       await resend.emails.send({
