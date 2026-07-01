@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "send:barcodes": "node scripts/send-guest-barcodes.cjs",
     "lint": "next lint"
   },
   "dependencies": {

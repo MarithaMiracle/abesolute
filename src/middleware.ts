@@ -13,6 +13,7 @@ export function middleware(request: NextRequest) {
   if (
   pathname.startsWith('/enter') ||
   pathname.startsWith('/api/unlock') ||
+  pathname.startsWith('/api/checkin') ||
   pathname.startsWith('/checkin') ||
   pathname.startsWith('/admin')
 ) {

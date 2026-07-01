@@ -17,18 +17,28 @@ function toCSVRow(data: Record<string, string>) {
     data['Email'],
     data['Phone'],
     data['Attendance'],
+    data['Guest Count'],
     data['Other Guests'] || 'N/A',
+    data['QR Token'] || 'N/A',
+    data['Allowed Scans'] || '0',
+    data['Used Scans'] || '0',
     data['Message'] || 'N/A',
     new Date().toLocaleString('en-GB'),
   ]
   return fields.map(f => `"${(f || '').replace(/"/g, '""')}"`).join(',')
 }
 
-const CSV_HEADER = '"First Name","Surname","Email","Phone","Attendance","Other Guests","Message","Submitted At"'
+const CSV_HEADER = '"First Name","Surname","Email","Phone","Attendance","Guest Count","Other Guests","QR Token","Allowed Scans","Used Scans","Message","Submitted At"'
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
+
+    const qrToken = body['Attendance'] === 'yes' ? crypto.randomUUID() : ''
+    const allowedScans = body['Attendance'] === 'yes' ? Number(body['Guest Count'] || '1') : 0
+    const qrUrlBase = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.abesolutelovestory.com'
+    const qrUrl = qrToken ? `${qrUrlBase}/checkin?token=${encodeURIComponent(qrToken)}` : ''
+    const qrImageUrl = qrToken ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}` : ''
 
     const newRow = [
       body['First Name'],
@@ -36,7 +46,11 @@ export async function POST(req: NextRequest) {
       body['Email'],
       body['Phone'] || 'N/A',
       body['Attendance'],
-      body['Other Guests'] || 'N/A',
+      body['Guest Count'] || '0',
+      body['Other Guests'] || '0',
+      qrToken || 'N/A',
+      String(allowedScans),
+      '0',
       body['Message'] || 'N/A',
       new Date().toLocaleString('en-GB'),
     ]
@@ -71,13 +85,13 @@ export async function POST(req: NextRequest) {
     try {
       all = await sheets.spreadsheets.values.get({
         spreadsheetId: SHEET_ID,
-        range: `'${SHEET_TAB}'!A1:H`,
+        range: `'${SHEET_TAB}'!A1:L`,
       })
     } catch (err) {
       console.error('Sheets fetch failed:', err)
       return NextResponse.json({ error: 'sheets-fetch-failed' }, { status: 500 })
     }
-    const headerArr = ["First Name","Surname","Email","Phone","Attendance","Other Guests","Message","Submitted At"]
+    const headerArr = ["First Name","Surname","Email","Phone","Attendance","Guest Count","Other Guests","QR Token","Allowed Scans","Used Scans","Message","Submitted At"]
     let rows = (all.data.values || []) as string[][]
 
     // Filter out empty rows
@@ -97,6 +111,34 @@ export async function POST(req: NextRequest) {
     const csvBase64 = Buffer.from(csvContent).toString('base64')
 
     try {
+      if (body['Email']) {
+        await resend.emails.send({
+          from: 'Feyisayo & Temitayo <rsvp@abesolutelovestory.com>',
+          to: body['Email'],
+          subject: body['Attendance'] === 'yes' ? 'Your entry barcode for the wedding' : 'Thank you for your RSVP',
+          html: `
+            <div style="font-family:system-ui, sans-serif; color:#1f2937; line-height:1.6;">
+              <p>Dear Guest,</p>
+              ${body['Attendance'] === 'yes' ? `
+                <p>Please present your barcode for entry:</p>
+                <div style="margin:24px 0; text-align:center;">
+                  <img src="${qrImageUrl}" alt="QR Code" width="300" height="300" style="border:1px solid #ddd; border-radius:12px; display:block; margin:0 auto;" />
+                </div>
+                <p style="font-weight:600; margin:12px 0 0;">${body['First Name']} ${body['Surname']} - Attending</p>
+                <p style="margin:8px 0 0; font-size:14px; color:#4b5563;"><strong>Date:</strong> 4th July 2026<br /><strong>Venue:</strong> Grand Venue, Oldham OL9 6AZ<br /><strong>Guest Arrival Time:</strong> 12:00 PM</p>
+                <p style="margin:20px 0 0;">Kindly note this is a strictly invitation-only event. Entry is reserved for guests on the confirmed guest list, and we kindly ask that no additional plus-ones or children not included in the invitation attend.</p>
+                <p style="margin:0;">We can’t wait to celebrate this special day with you!</p>
+                <p style="margin:24px 0 0;">Warm regards,<br/>Feyisayo & Temitayo</p>
+                <p style="margin-top:20px; font-size:12px; color:#9ca3af;">If the code image does not appear, please use this link: <a href="${qrUrl}">${qrUrl}</a></p>
+              ` : `
+                <p>Thank you for letting us know. We are sorry you are unable to attend and appreciate you confirming your RSVP.</p>
+                <p style="margin:20px 0 0;">Warm regards,<br/>Feyisayo & Temitayo</p>
+              `}
+            </div>
+          `,
+        })
+      }
+
       await resend.emails.send({
         from: 'RSVP <rsvp@abesolutelovestory.com>',
         to: process.env.CLIENT_EMAIL!,
@@ -108,7 +150,10 @@ export async function POST(req: NextRequest) {
             <tr><td style="padding:8px;border:1px solid #ddd"><strong>Email</strong></td><td style="padding:8px;border:1px solid #ddd">${body['Email']}</td></tr>
             <tr><td style="padding:8px;border:1px solid #ddd"><strong>Phone</strong></td><td style="padding:8px;border:1px solid #ddd">${body['Phone'] || 'N/A'}</td></tr>
             <tr><td style="padding:8px;border:1px solid #ddd"><strong>Attendance</strong></td><td style="padding:8px;border:1px solid #ddd">${body['Attendance']}</td></tr>
-            <tr><td style="padding:8px;border:1px solid #ddd"><strong>Other Guests</strong></td><td style="padding:8px;border:1px solid #ddd">${body['Other Guests'] || 'N/A'}</td></tr>
+            <tr><td style="padding:8px;border:1px solid #ddd"><strong>Guest Count</strong></td><td style="padding:8px;border:1px solid #ddd">${body['Guest Count'] || '0'}</td></tr>
+            <tr><td style="padding:8px;border:1px solid #ddd"><strong>Other Guests</strong></td><td style="padding:8px;border:1px solid #ddd">${body['Other Guests'] || '0'}</td></tr>
+            <tr><td style="padding:8px;border:1px solid #ddd"><strong>QR Token</strong></td><td style="padding:8px;border:1px solid #ddd">${qrToken || 'N/A'}</td></tr>
+            <tr><td style="padding:8px;border:1px solid #ddd"><strong>Allowed Scans</strong></td><td style="padding:8px;border:1px solid #ddd">${allowedScans}</td></tr>
             <tr><td style="padding:8px;border:1px solid #ddd"><strong>Message</strong></td><td style="padding:8px;border:1px solid #ddd">${body['Message'] || 'N/A'}</td></tr>
           </table>
           <p style="color:#888;font-size:12px">Submitted at ${new Date().toLocaleString('en-GB')}</p>

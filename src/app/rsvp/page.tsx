@@ -11,6 +11,7 @@ type FormData = {
   email: string
   phone: string
   attendance: string
+  guestCount: string
   message?: string
 }
 
@@ -22,6 +23,7 @@ export default function RSVPPage() {
     email: '',
     phone: '',
     attendance: '',
+    guestCount: '1',
     message: ''
   })
   const [submitted, setSubmitted] = useState(false)
@@ -53,6 +55,8 @@ export default function RSVPPage() {
       'Email': form.email,
       'Phone': form.phone || 'N/A',
       'Attendance': form.attendance,
+      'Guest Count': form.attendance === 'yes' ? form.guestCount : '0',
+      'Other Guests': form.attendance === 'yes' ? String(Math.max(0, Number(form.guestCount) - 1)) : '0',
       'Message': form.message || 'N/A',
     }
 
@@ -254,9 +258,25 @@ export default function RSVPPage() {
                             <span className="text-navy-true font-sans text-lg sm:text-2xl">No, sorry unable to attend</span>
                           </label>
                         </div>
+                        {form.attendance === 'yes' && (
+                          <div className="mt-6">
+                            <label className="block text-blue/70 text-xs sm:text-base font-sans mb-2 tracking-wide">How many guests will attend, including you?</label>
+                            <select
+                              name="guestCount"
+                              value={form.guestCount}
+                              onChange={handleChange}
+                              className="w-full bg-white border border-navy/50 text-black rounded-xl px-3 py-3 text-sm font-sans focus:outline-none focus:border-white/50 transition-all"
+                            >
+                              {[1, 2, 3, 4].map(count => (
+                                <option key={count} value={String(count)}>{count} {count === 1 ? 'guest' : 'guests'}</option>
+                              ))}
+                            </select>
+                            <p className="text-xs text-black/50 mt-2">This total includes you. Only guests stated on your invitation may attend.</p>
+                          </div>
+                        )}
                         <div className="flex justify-between mt-6 sm:absolute sm:bottom-6 sm:left-10 sm:right-10 md:left-12 md:right-12">
                           <button type="button" onClick={() => setStep(1)} className="text-navy-true/50 text-sm sm:text-lg font-sans hover:text-white/80 transition-colors">← Previous</button>
-                          <button type="submit" disabled={!form.attendance} className={`flex items-center gap-2 font-sans text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl transition-all ${!form.attendance ? 'bg-gray-400 cursor-not-allowed' : 'bg-navy-true hover:bg-blue-muted/80'} text-white`}>
+                          <button type="submit" disabled={!form.attendance || (form.attendance === 'yes' && Number(form.guestCount) < 1)} className={`flex items-center gap-2 font-sans text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl transition-all ${!form.attendance || (form.attendance === 'yes' && Number(form.guestCount) < 1) ? 'bg-gray-400 cursor-not-allowed' : 'bg-navy-true hover:bg-blue-muted/80'} text-white`}>
                             Next <span className="text-sm sm:text-lg">»</span>
                           </button>
                         </div>
