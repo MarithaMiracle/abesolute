@@ -78,7 +78,7 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;')
 }
 
-function buildEmailHtml({ firstName, surname, tableNumber, seatNumber, qrImageUrl, qrUrl }) {
+function buildGuestLine({ firstName, surname, tableNumber, seatNumber }) {
   const fullName = `${firstName} ${surname}`.trim() || 'Guest'
   const seatingDetails = [
     tableNumber ? `Your assigned table number is Table ${escapeHtml(tableNumber)}.` : '',
@@ -89,13 +89,21 @@ function buildEmailHtml({ firstName, surname, tableNumber, seatNumber, qrImageUr
     : ''
 
   return `
+    <div style="margin:14px 0; padding:14px; border:1px solid #e5e7eb; border-radius:12px; background:#ffffff;">
+      <p style="font-weight:600; margin:0 0 10px;">${escapeHtml(fullName)} - Attending${seatingLine}</p>
+    </div>
+  `
+}
+
+function buildEmailHtml({ guestBlocks, qrImageUrl, qrUrl }) {
+  return `
     <div style="font-family:system-ui, sans-serif; color:#1f2937; line-height:1.6;">
       <p>Dear Guest,</p>
-      <p>Please present your barcode for entry:</p>
-      <div style="margin:24px 0; text-align:center;">
+      <p>Please present this barcode for entry. It covers ${guestBlocks.length} guest${guestBlocks.length === 1 ? '' : 's'} and can be scanned ${guestBlocks.length} time${guestBlocks.length === 1 ? '' : 's'}.</p>
+      <div style="margin:18px 0; text-align:center;">
         <img src="${escapeHtml(qrImageUrl)}" alt="QR Code" width="160" height="160" style="border:1px solid #ddd; border-radius:10px; display:block; margin:0 auto;" />
       </div>
-      <p style="font-weight:600; margin:12px 0 0;">${escapeHtml(fullName)} - Attending${seatingLine}</p>
+      ${guestBlocks.map(buildGuestLine).join('')}
       <p style="margin:8px 0 0; font-size:14px; color:#4b5563;"><strong>Date:</strong> 4th July 2026<br /><strong>Venue:</strong> Grand Venue, Oldham OL9 6AZ<br /><strong>Guest Arrival Time:</strong> 12:00 PM</p>
       <p style="margin:20px 0 0; font-size:13px; color:#4b5563;">Kindly note this is a strictly invitation-only event. Entry is reserved for guests on the confirmed guest list, and we kindly ask that no additional plus-ones or children not included in the invitation attend.</p>
       <p style="margin:0;">We can't wait to celebrate this special day with you!</p>
@@ -119,8 +127,8 @@ Real send:
 
 Notes:
   --row uses the Google Sheet row number, where row 1 is the header.
-  --test-to sends the selected guest's barcode to your chosen email address.
-  --send-all sends to each attending guest's Email column.
+  --test-to sends the selected guest barcode(s) to your chosen email address.
+  --send-all sends one email per Email column, grouping all guests under that address.
 `)
 }
 
@@ -257,6 +265,12 @@ async function main() {
   }
 
   let targets = selectedRows.filter(({ row }) => isAttending(row, columns))
+  if (testTo && (sheetRowNumber || guestEmail)) {
+    const selectedEmails = new Set(targets.map(({ row }) => cell(row, columns, 'email').toLowerCase()).filter(Boolean))
+    if (selectedEmails.size > 0) {
+      targets = dataRows.filter(({ row }) => selectedEmails.has(cell(row, columns, 'email').toLowerCase()) && isAttending(row, columns))
+    }
+  }
   if (testTo && !sheetRowNumber && !guestEmail) {
     targets = targets.slice(0, 1)
   }
@@ -275,91 +289,110 @@ async function main() {
     throw new Error('No matching attending RSVP rows found.')
   }
 
+  const groupedTargets = new Map()
+  for (const target of targets) {
+    const email = cell(target.row, columns, 'email').toLowerCase()
+    if (!email) continue
+    if (!groupedTargets.has(email)) groupedTargets.set(email, [])
+    groupedTargets.get(email).push(target)
+  }
+
+  const groups = testTo
+    ? [[testTo.toLowerCase(), targets]]
+    : [...groupedTargets.entries()]
+
+  if (groups.length === 0) {
+    throw new Error('No matching attending RSVP rows with email addresses found.')
+  }
+
   const resend = new Resend(process.env.RESEND_API_KEY)
   let sent = 0
 
-  for (const target of targets) {
-    const { row, sheetRowNumber: currentSheetRow } = target
-    const guestName = cell(row, columns, 'guest name')
-    const splitName = guestName ? guestName.split(/\s+/) : []
-    const firstName = cell(row, columns, 'first name') || splitName.slice(0, -1).join(' ') || guestName
-    const surname = cell(row, columns, 'surname') || (guestName && splitName.length > 1 ? splitName.at(-1) : '')
-    const guestEmailAddress = cell(row, columns, 'email')
-    const tableNumber = cell(row, columns, 'table number')
-    const seatNumber = cell(row, columns, 'seat number')
-    const guestCountValue = cell(row, columns, 'guest count')
-    const otherGuestsValue = cell(row, columns, 'other guests')
-    const guestCount = guestCountValue ? Number(guestCountValue) : Number(otherGuestsValue || '0') + 1
-    const allowedScans = Number.isFinite(guestCount) && guestCount > 0 ? guestCount : 1
+  for (const [to, groupRows] of groups) {
+    const guestBlocks = []
+    const groupAllowedScans = groupRows.length
+    const existingGroupToken = groupRows
+      .map(({ row }) => cell(row, columns, 'qr token'))
+      .find(token => token && token.toLowerCase() !== 'n/a')
+    const groupToken = existingGroupToken || crypto.randomUUID()
+    const groupUsedScans = Math.max(0, ...groupRows.map(({ row }) => Number(cell(row, columns, 'used scans') || '0')).filter(Number.isFinite))
+    const groupQrUrl = `${siteUrl}/checkin?token=${encodeURIComponent(groupToken)}`
+    const groupQrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(groupQrUrl)}`
 
-    let qrToken = cell(row, columns, 'qr token')
-    if (!qrToken || qrToken.toLowerCase() === 'n/a') {
-      qrToken = crypto.randomUUID()
-      if (dryRun) {
-        console.log(`Would generate QR token for row ${currentSheetRow}.`)
-      } else {
-        const tokenColumn = columnLetters(columns['qr token'])
-        await sheets.spreadsheets.values.update({
-          spreadsheetId: sheetId,
-          range: `'${sheetTab}'!${tokenColumn}${currentSheetRow}`,
-          valueInputOption: 'RAW',
-          requestBody: { values: [[qrToken]] },
-        })
+    for (const target of groupRows) {
+      const { row, sheetRowNumber: currentSheetRow } = target
+      const guestName = cell(row, columns, 'guest name')
+      const splitName = guestName ? guestName.split(/\s+/) : []
+      const firstName = cell(row, columns, 'first name') || splitName.slice(0, -1).join(' ') || guestName
+      const surname = cell(row, columns, 'surname') || (guestName && splitName.length > 1 ? splitName.at(-1) : '')
+      const tableNumber = cell(row, columns, 'table number')
+      const seatNumber = cell(row, columns, 'seat number')
+      const existingQrToken = cell(row, columns, 'qr token')
+      if (existingQrToken !== groupToken) {
+        if (dryRun) {
+          console.log(`Would set QR token for row ${currentSheetRow} to the shared email-group token.`)
+        } else {
+          const tokenColumn = columnLetters(columns['qr token'])
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: sheetId,
+            range: `'${sheetTab}'!${tokenColumn}${currentSheetRow}`,
+            valueInputOption: 'RAW',
+            requestBody: { values: [[groupToken]] },
+          })
+        }
       }
+
+      const allowedScansColumn = columnLetters(columns['allowed scans'])
+      const usedScansColumn = columnLetters(columns['used scans'])
+      const existingAllowedScans = cell(row, columns, 'allowed scans')
+      const existingUsedScans = cell(row, columns, 'used scans')
+
+      if (String(existingAllowedScans) !== String(groupAllowedScans)) {
+        if (dryRun) {
+          console.log(`Would set Allowed Scans for row ${currentSheetRow} to ${groupAllowedScans}.`)
+        } else {
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: sheetId,
+            range: `'${sheetTab}'!${allowedScansColumn}${currentSheetRow}`,
+            valueInputOption: 'RAW',
+            requestBody: { values: [[String(groupAllowedScans)]] },
+          })
+        }
+      }
+
+      if (!existingUsedScans || existingUsedScans.toLowerCase() === 'n/a' || Number(existingUsedScans) !== groupUsedScans) {
+        if (dryRun) {
+          console.log(`Would set Used Scans for row ${currentSheetRow} to ${groupUsedScans}.`)
+        } else {
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: sheetId,
+            range: `'${sheetTab}'!${usedScansColumn}${currentSheetRow}`,
+            valueInputOption: 'RAW',
+            requestBody: { values: [[String(groupUsedScans)]] },
+          })
+        }
+      }
+
+      const seatingLog = [tableNumber ? `Table ${tableNumber}` : '', seatNumber ? `Seat ${seatNumber}` : ''].filter(Boolean).join(', ')
+      console.log(`${dryRun ? 'Would include' : 'Including'} row ${currentSheetRow}: ${firstName} ${surname}${seatingLog ? ` (${seatingLog})` : ''} -> ${to}`)
+
+      guestBlocks.push({ firstName, surname, tableNumber, seatNumber })
     }
 
-    const allowedScansColumn = columnLetters(columns['allowed scans'])
-    const usedScansColumn = columnLetters(columns['used scans'])
-    const existingAllowedScans = cell(row, columns, 'allowed scans')
-    const existingUsedScans = cell(row, columns, 'used scans')
-
-    if (!existingAllowedScans || existingAllowedScans.toLowerCase() === 'n/a') {
-      if (dryRun) {
-        console.log(`Would set Allowed Scans for row ${currentSheetRow} to ${allowedScans}.`)
-      } else {
-        await sheets.spreadsheets.values.update({
-          spreadsheetId: sheetId,
-          range: `'${sheetTab}'!${allowedScansColumn}${currentSheetRow}`,
-          valueInputOption: 'RAW',
-          requestBody: { values: [[String(allowedScans)]] },
-        })
-      }
-    }
-
-    if (!existingUsedScans || existingUsedScans.toLowerCase() === 'n/a') {
-      if (dryRun) {
-        console.log(`Would set Used Scans for row ${currentSheetRow} to 0.`)
-      } else {
-        await sheets.spreadsheets.values.update({
-          spreadsheetId: sheetId,
-          range: `'${sheetTab}'!${usedScansColumn}${currentSheetRow}`,
-          valueInputOption: 'RAW',
-          requestBody: { values: [['0']] },
-        })
-      }
-    }
-
-    const qrUrl = `${siteUrl}/checkin?token=${encodeURIComponent(qrToken)}`
-    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(qrUrl)}`
-    const to = testTo || guestEmailAddress
-
-    const seatingLog = [tableNumber ? `Table ${tableNumber}` : '', seatNumber ? `Seat ${seatNumber}` : ''].filter(Boolean).join(', ')
-    console.log(`${dryRun ? 'Would send' : 'Sending'} row ${currentSheetRow}: ${firstName} ${surname}${seatingLog ? ` (${seatingLog})` : ''} -> ${to}`)
+    console.log(`${dryRun ? 'Would send' : 'Sending'} one email to ${to} with one barcode for ${guestBlocks.length} guest${guestBlocks.length === 1 ? '' : 's'}.`)
 
     if (!dryRun) {
       await resend.emails.send({
         from: 'Feyisayo & Temitayo <rsvp@abesolutelovestory.com>',
         to,
         subject: 'Your entry barcode for the wedding',
-        html: buildEmailHtml({ firstName, surname, tableNumber, seatNumber, qrImageUrl, qrUrl }),
+        html: buildEmailHtml({ guestBlocks, qrImageUrl: groupQrImageUrl, qrUrl: groupQrUrl }),
       })
       sent += 1
     }
-
-    if (testTo) break
   }
 
-  console.log(dryRun ? `Dry run complete. ${targets.length} attending row(s) matched.` : `Done. Sent ${sent} email(s).`)
+  console.log(dryRun ? `Dry run complete. ${targets.length} attending row(s) matched across ${groups.length} email(s).` : `Done. Sent ${sent} email(s).`)
 }
 
 main().catch(error => {

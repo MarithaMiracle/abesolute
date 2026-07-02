@@ -65,17 +65,24 @@ export async function POST(req: NextRequest) {
     }
 
     const dataRows = rows.slice(1)
-    const matchRowIndex = dataRows.findIndex(row => String(row[tokenColumn] || '').trim() === token)
-    if (matchRowIndex === -1) {
+    const matchingRows = dataRows
+      .map((row, index) => ({ row, index }))
+      .filter(({ row }) => String(row[tokenColumn] || '').trim() === token)
+    if (matchingRows.length === 0) {
       return NextResponse.json({ success: false, error: 'token-not-found', message: 'This barcode is not recognized. Please check it and try again.' }, { status: 404 })
     }
 
-    const row = dataRows[matchRowIndex]
-    const allowedScans = Number(row[allowedScansColumn] || '0')
-    const usedScans = Number(row[usedScansColumn] || '0')
-    const attendanceValue = String(row[attendanceColumn] || '').trim().toLowerCase()
+    const allowedScans = Math.max(
+      matchingRows.length,
+      ...matchingRows.map(({ row }) => Number(row[allowedScansColumn] || '0')).filter(Number.isFinite)
+    )
+    const usedScans = Math.max(
+      0,
+      ...matchingRows.map(({ row }) => Number(row[usedScansColumn] || '0')).filter(Number.isFinite)
+    )
+    const hasAttendingGuest = matchingRows.some(({ row }) => isAttending(String(row[attendanceColumn] || '')))
 
-    if (allowedScans <= 0 || !isAttending(attendanceValue)) {
+    if (allowedScans <= 0 || !hasAttendingGuest) {
       return NextResponse.json({ success: false, error: 'invalid-token', message: 'This barcode is not valid for entry.' }, { status: 403 })
     }
 
@@ -84,17 +91,19 @@ export async function POST(req: NextRequest) {
     }
 
     const newUsedScans = usedScans + 1
-    const sheetRowNumber = matchRowIndex + 2
     const updateColumn = columnLetters(usedScansColumn)
 
-    await sheets.spreadsheets.values.update({
+    await Promise.all(matchingRows.map(({ index }) => sheets.spreadsheets.values.update({
       spreadsheetId: SHEET_ID,
-      range: `'${SHEET_TAB}'!${updateColumn}${sheetRowNumber}`,
+      range: `'${SHEET_TAB}'!${updateColumn}${index + 2}`,
       valueInputOption: 'RAW',
       requestBody: { values: [[String(newUsedScans)]] },
-    })
+    })))
 
-    const guestName = String(row[fullNameColumn] || `${row[guestNameColumn] || ''} ${row[surnameColumn] || ''}`).trim()
+    const guestNames = matchingRows
+      .map(({ row }) => String(row[fullNameColumn] || `${row[guestNameColumn] || ''} ${row[surnameColumn] || ''}`).trim())
+      .filter(Boolean)
+    const guestName = guestNames.length > 1 ? `${guestNames[0]} and ${guestNames.length - 1} other${guestNames.length === 2 ? '' : 's'}` : guestNames[0]
     const remainingScans = Math.max(0, allowedScans - newUsedScans)
 
     return NextResponse.json({
