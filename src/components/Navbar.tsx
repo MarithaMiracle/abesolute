@@ -26,6 +26,7 @@ export default function Navbar() {
   { name: 'Ceremony', path: '/ceremony' },
   { name: 'Wedding Party', path: '/wedding-party' },
   { name: 'Gifting', path: '/gifting' },
+  { name: 'Seating', path: '/seating' },
 ]
 
   return (
