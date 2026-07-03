@@ -4,6 +4,9 @@ const crypto = require('crypto')
 const { google } = require('googleapis')
 const { Resend } = require('resend')
 
+const SHEET_WRITE_DELAY_MS = 1200
+let lastSheetWriteAt = 0
+
 function loadEnv() {
   const envPath = path.join(process.cwd(), '.env')
   if (!fs.existsSync(envPath)) return
@@ -34,6 +37,48 @@ function getArg(name) {
 
 function hasFlag(name) {
   return process.argv.includes(name)
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+function isQuotaError(error) {
+  const message = String(error?.message || error || '').toLowerCase()
+  return message.includes('quota exceeded') || message.includes('rate limit') || error?.code === 429
+}
+
+async function waitForSheetWriteSlot() {
+  const elapsed = Date.now() - lastSheetWriteAt
+  if (elapsed < SHEET_WRITE_DELAY_MS) {
+    await sleep(SHEET_WRITE_DELAY_MS - elapsed)
+  }
+}
+
+async function updateSheetValuesWithRetry(sheets, spreadsheetId, data, label = 'sheet update') {
+  if (data.length === 0) return
+
+  for (let attempt = 1; attempt <= 6; attempt += 1) {
+    await waitForSheetWriteSlot()
+
+    try {
+      await sheets.spreadsheets.values.batchUpdate({
+        spreadsheetId,
+        requestBody: {
+          valueInputOption: 'RAW',
+          data,
+        },
+      })
+      lastSheetWriteAt = Date.now()
+      return
+    } catch (error) {
+      if (!isQuotaError(error) || attempt === 6) throw error
+
+      const waitMs = 15000 * attempt
+      console.log(`Google Sheets quota paused ${label}. Waiting ${Math.round(waitMs / 1000)}s before retry ${attempt + 1}/6.`)
+      await sleep(waitMs)
+    }
+  }
 }
 
 function columnLetters(index) {
@@ -124,11 +169,13 @@ Safe test examples:
 
 Real send:
   npm run send:barcodes -- --send-all
+  npm run send:barcodes -- --send-all --start-row 29
 
 Notes:
   --row uses the Google Sheet row number, where row 1 is the header.
   --test-to sends the selected guest barcode(s) to your chosen email address.
   --send-all sends one email per Email column, grouping all guests under that address.
+  --start-row resumes from email groups whose first RSVP row is that row or later.
 `)
 }
 
@@ -146,6 +193,8 @@ async function main() {
   const guestEmail = getArg('--guest-email').toLowerCase()
   const rowArg = getArg('--row')
   const sheetRowNumber = rowArg ? Number(rowArg) : 0
+  const startRowArg = getArg('--start-row')
+  const startRow = startRowArg ? Number(startRowArg) : 0
 
   if (!dryRun && !sendAll && !testTo) {
     usage()
@@ -154,6 +203,10 @@ async function main() {
 
   if (sendAll && testTo) {
     throw new Error('Use either --send-all or --test-to, not both.')
+  }
+
+  if (startRow && (!Number.isInteger(startRow) || startRow < 2)) {
+    throw new Error('--start-row must be a Google Sheet data row number, for example --start-row 29.')
   }
 
   const requiredEnv = [
@@ -237,12 +290,10 @@ async function main() {
       console.log(`Would add sheet headers: ${missingTrackingHeaders.map(([, label]) => label).join(', ')}`)
     } else {
       const endColumn = columnLetters(headerValues.length - 1)
-      await sheets.spreadsheets.values.update({
-        spreadsheetId: sheetId,
+      await updateSheetValuesWithRetry(sheets, sheetId, [{
         range: `'${sheetTab}'!A1:${endColumn}1`,
-        valueInputOption: 'RAW',
-        requestBody: { values: [headerValues] },
-      })
+        values: [headerValues],
+      }], 'header setup')
       console.log(`Added sheet headers starting at ${columnLetters(startColumn)}: ${missingTrackingHeaders.map(([, label]) => label).join(', ')}`)
     }
   }
@@ -297,9 +348,16 @@ async function main() {
     groupedTargets.get(email).push(target)
   }
 
-  const groups = testTo
+  let groups = testTo
     ? [[testTo.toLowerCase(), targets]]
     : [...groupedTargets.entries()]
+
+  if (startRow) {
+    groups = groups.filter(([, groupRows]) => {
+      const firstGroupRow = Math.min(...groupRows.map(({ sheetRowNumber: currentSheetRow }) => currentSheetRow))
+      return firstGroupRow >= startRow
+    })
+  }
 
   if (groups.length === 0) {
     throw new Error('No matching attending RSVP rows with email addresses found.')
@@ -310,6 +368,7 @@ async function main() {
 
   for (const [to, groupRows] of groups) {
     const guestBlocks = []
+    const groupSheetUpdates = []
     const groupAllowedScans = groupRows.length
     const existingGroupToken = groupRows
       .map(({ row }) => cell(row, columns, 'qr token'))
@@ -333,11 +392,9 @@ async function main() {
           console.log(`Would set QR token for row ${currentSheetRow} to the shared email-group token.`)
         } else {
           const tokenColumn = columnLetters(columns['qr token'])
-          await sheets.spreadsheets.values.update({
-            spreadsheetId: sheetId,
+          groupSheetUpdates.push({
             range: `'${sheetTab}'!${tokenColumn}${currentSheetRow}`,
-            valueInputOption: 'RAW',
-            requestBody: { values: [[groupToken]] },
+            values: [[groupToken]],
           })
         }
       }
@@ -351,11 +408,9 @@ async function main() {
         if (dryRun) {
           console.log(`Would set Allowed Scans for row ${currentSheetRow} to ${groupAllowedScans}.`)
         } else {
-          await sheets.spreadsheets.values.update({
-            spreadsheetId: sheetId,
+          groupSheetUpdates.push({
             range: `'${sheetTab}'!${allowedScansColumn}${currentSheetRow}`,
-            valueInputOption: 'RAW',
-            requestBody: { values: [[String(groupAllowedScans)]] },
+            values: [[String(groupAllowedScans)]],
           })
         }
       }
@@ -364,11 +419,9 @@ async function main() {
         if (dryRun) {
           console.log(`Would set Used Scans for row ${currentSheetRow} to ${groupUsedScans}.`)
         } else {
-          await sheets.spreadsheets.values.update({
-            spreadsheetId: sheetId,
+          groupSheetUpdates.push({
             range: `'${sheetTab}'!${usedScansColumn}${currentSheetRow}`,
-            valueInputOption: 'RAW',
-            requestBody: { values: [[String(groupUsedScans)]] },
+            values: [[String(groupUsedScans)]],
           })
         }
       }
@@ -377,6 +430,10 @@ async function main() {
       console.log(`${dryRun ? 'Would include' : 'Including'} row ${currentSheetRow}: ${firstName} ${surname}${seatingLog ? ` (${seatingLog})` : ''} -> ${to}`)
 
       guestBlocks.push({ firstName, surname, tableNumber, seatNumber })
+    }
+
+    if (!dryRun) {
+      await updateSheetValuesWithRetry(sheets, sheetId, groupSheetUpdates, `QR setup for ${to}`)
     }
 
     console.log(`${dryRun ? 'Would send' : 'Sending'} one email to ${to} with one barcode for ${guestBlocks.length} guest${guestBlocks.length === 1 ? '' : 's'}.`)
